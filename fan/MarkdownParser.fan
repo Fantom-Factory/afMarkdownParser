@@ -49,7 +49,13 @@ const class MarkdownParser {
 				switch (item.type) {
 					case "paragraph":
 					case "blockquote":
+						pop()
 					case "heading":
+						// tidy up trailing hashes --> ## h2 ##
+						heading := (Heading) elems.last
+						text	:= (DocText?) heading.children.last
+						while (text?.str?.endsWith("#") ?: false)
+							text.str = text.str[0..<-1].trimEnd
 						pop()
 				}
 			}
@@ -72,11 +78,12 @@ internal class MarkdownRules : TreeRules {
 		text			:= rules["text"]
 
 		eol				:= firstOf { char('\n'), eos }
+		anySpace		:= zeroOrMore(anyCharOf([' ', '\t']))
 		
 		rules["statement"]	= firstOf { heading, blockquote, paragraph, eol, }
 		rules["paragraph"]	= sequence { push("paragraph"), oneOrMore(line), eol, pop, }
-		rules["heading"]	= sequence { between(1..4, char('#')).withAction(pushHeading), oneOrMore(anyCharOf([' ', '\t'])), line, pop, }
-		rules["blockquote"]	= sequence { push("blockquote"), char('>'), oneOrMore(anyCharOf([' ', '\t'])), line, pop, }
+		rules["heading"]	= sequence { between(1..4, char('#')).withAction(pushHeading), onlyIf(anyCharNot('#')), anySpace, line, pop, }
+		rules["blockquote"]	= sequence { push("blockquote"), char('>'), anySpace, line, pop, }
 		rules["line"]		= sequence { text, eol, }
 		rules["text"]		= oneOrMore( anyCharNot('\n') ).withAction(addAction("text"))
 		

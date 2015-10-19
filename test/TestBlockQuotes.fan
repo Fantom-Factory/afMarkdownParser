@@ -10,8 +10,8 @@ internal class TestBlockQuotes : MarkdownTest {
  > Pardon my dutch
  para 2
 
- > Pardon my german 
- > Pardon my spanish
+ >   Pardon my german 
+ >Pardon my spanish
  "
 		html :=
 "<p>para 1</p>

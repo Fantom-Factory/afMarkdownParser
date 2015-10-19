@@ -5,8 +5,8 @@ internal class TestHeadings : MarkdownTest {
 		markdown :=
 "# h1
  ## h2
- ### h3
- #### h4
+ ###   h3   ###
+ ####h4##
  ##### Fandoc only supports 4 heading levels
  "
 		html :=
