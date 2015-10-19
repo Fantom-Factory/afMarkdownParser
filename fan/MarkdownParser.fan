@@ -2,6 +2,51 @@ using afPegger
 using fandoc
 
 
+internal class MarkdownRules : TreeRules {
+	
+	Rule rootRule() {
+		rules := NamedRules()
+
+		statement		:= rules["statement"]
+		paragraph		:= rules["paragraph"]
+		heading			:= rules["heading"]
+		blockquote		:= rules["blockquote"]
+		line			:= rules["line"]
+		text			:= rules["text"]
+		bold1			:= rules["bold1"]
+		bold2			:= rules["bold2"]
+		italic1			:= rules["italic1"]
+		italic2			:= rules["italic2"]
+		textChar		:= rules["textChar"]
+
+		eol				:= firstOf { char('\n'), eos }
+		anySpace		:= zeroOrMore(anyCharOf([' ', '\t']))
+		
+		rules["statement"]	= firstOf { heading, blockquote, paragraph, eol, }
+		rules["paragraph"]	= sequence { push("paragraph"), oneOrMore(line), eol, pop, }
+		rules["heading"]	= sequence { between(1..4, char('#')).withAction(pushHeading), onlyIf(anyCharNot('#')), anySpace, line, pop, }
+		rules["blockquote"]	= sequence { push("blockquote"), char('>'), anySpace, line, pop, }
+		rules["line"]		= sequence { text, eol, }
+		rules["text"]		= oneOrMore( firstOf { italic1, italic2, bold1, bold2, anyCharNot('\n').withAction(addText), })
+		
+		// suppress multiline bold and italics, 'cos it may in the middle of a list, or gawd knows where!
+		rules["italic1"]	= sequence { onlyIfNot(str("* ")), push("italic"), char('*'), oneOrMore(anyCharNot('*')).withAction(addText), char('*'), pop, }
+		rules["italic2"]	= sequence { onlyIfNot(str("_ ")), push("italic"), char('_'), oneOrMore(anyCharNot('_')).withAction(addText), char('_'), pop, }
+		rules["bold1"]		= sequence { push("bold"), str("**"), oneOrMore(anyCharNot('*')).withAction(addText), str("**"), pop, }
+		rules["bold2"]		= sequence { push("bold"), str("__"), oneOrMore(anyCharNot('_')).withAction(addText), str("__"), pop, }
+		
+		return statement
+	}
+	
+	|Str matched, Obj? ctx| addText() {
+		addAction("text")
+	}
+
+	|Str matched, Obj? ctx| pushHeading() {
+		|Str matched, Obj? ctx| { ((TreeCtx) ctx).push("heading", matched, matched.size) }
+	}
+}
+
 const class MarkdownParser {
 	
 	Doc parse(Str markdown) {
@@ -32,23 +77,24 @@ const class MarkdownParser {
 		tree.root.walk(
 			|TreeItem item| {
 				switch (item.type) {
-					case "paragraph":
-						push(Para())
 					case "blockquote":
 						if (elems.last.children.last isnot BlockQuote)
 							push(BlockQuote())
 						else
 							repush()
-					case "heading":
-						push(Heading(item.data))
-					case "text":
-						add(DocText(item.matched))
+					case "paragraph"	: push(Para())
+					case "heading"		: push(Heading(item.data))
+					case "italic"		: push(Emphasis())
+					case "bold"			: push(Strong())
+					case "text"			: add(DocText(item.matched))
 				}
 			},
 			|TreeItem item| {
 				switch (item.type) {
 					case "paragraph":
 					case "blockquote":
+					case "italic":
+					case "bold":
 						pop()
 					case "heading":
 						// tidy up trailing hashes --> ## h2 ##
@@ -64,73 +110,3 @@ const class MarkdownParser {
 		return elems.first
 	}
 }
-
-internal class MarkdownRules : TreeRules {
-	
-	Rule rootRule() {
-		rules := NamedRules()
-
-		statement		:= rules["statement"]
-		paragraph		:= rules["paragraph"]
-		heading			:= rules["heading"]
-		blockquote		:= rules["blockquote"]
-		line			:= rules["line"]
-		text			:= rules["text"]
-
-		eol				:= firstOf { char('\n'), eos }
-		anySpace		:= zeroOrMore(anyCharOf([' ', '\t']))
-		
-		rules["statement"]	= firstOf { heading, blockquote, paragraph, eol, }
-		rules["paragraph"]	= sequence { push("paragraph"), oneOrMore(line), eol, pop, }
-		rules["heading"]	= sequence { between(1..4, char('#')).withAction(pushHeading), onlyIf(anyCharNot('#')), anySpace, line, pop, }
-		rules["blockquote"]	= sequence { push("blockquote"), char('>'), anySpace, line, pop, }
-		rules["line"]		= sequence { text, eol, }
-		rules["text"]		= oneOrMore( anyCharNot('\n') ).withAction(addAction("text"))
-		
-		return statement
-	}
-	
-	|Str matched, Obj? ctx| pushHeading() {
-		|Str matched, Obj? ctx| { ((TreeCtx) ctx).push("heading", matched, matched.size) }
-	}
-
-//	|Str matched, Obj? ctx| pushPara 		:= |Str matched, MarkdownCtx ctx| { ctx.pushPara(matched) }
-//	|Str matched, Obj? ctx| pushHeading		:= |Str matched, MarkdownCtx ctx| { ctx.pushHeading(matched) }
-//	|Str matched, Obj? ctx| pushBlockquote	:= |Str matched, MarkdownCtx ctx| { ctx.pushBlockquote(matched) }
-//	|Str matched, Obj? ctx| addText			:= |Str matched, MarkdownCtx ctx| { ctx.addText(matched) }
-//	|Str matched, Obj? ctx| pop				:= |Str matched, MarkdownCtx ctx| { ctx.pop }
-}
-
-//internal class MarkdownCtx {
-//	DocElem[]	elems			:= [Doc()]
-//	Int?		headingLevel
-//
-//	Void pushPara(Str matched) {
-//		push(Para())
-//	}
-//
-//	Void pushHeading(Str matched) {
-//		push(Heading(matched.size))
-//		headingLevel = null
-//	}
-//
-//	Void pushBlockquote(Str matched) {
-//		push(BlockQuote())
-//	}
-//
-//	Void addText(Str matched) {
-//		elems.last.add(DocText(matched))
-//	}
-//
-//	private Void push(DocElem elem) {
-//		elems.last.add(elem)
-//		elems.push(elem)		
-//	}
-//
-//	Void pop() {
-//		echo("pop")
-//		elems.pop
-////		elems.first.dump
-//	}
-//	
-//}
