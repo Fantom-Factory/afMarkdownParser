@@ -11,14 +11,15 @@ internal class MarkdownRules : TreeRules {
 		paragraph		:= rules["paragraph"]
 		heading			:= rules["heading"]
 		blockquote		:= rules["blockquote"]
+		pre				:= rules["pre"]
 		line			:= rules["line"]
-		text			:= rules["text"]
 		bold1			:= rules["bold1"]
 		bold2			:= rules["bold2"]
 		italic1			:= rules["italic1"]
 		italic2			:= rules["italic2"]
 		codeSpan		:= rules["code"]
-		pre				:= rules["pre"]
+		link			:= rules["link"]
+		text			:= rules["text"]
 
 		eol				:= |->Rule| { firstOf { char('\n'), eos } }
 		anySpace		:= zeroOrMore(anyCharOf([' ', '\t']))
@@ -35,10 +36,11 @@ internal class MarkdownRules : TreeRules {
 					sequence { between(0..4, char(' ')), char('\n'), },
 				} ),
 			} ).withAction(addText), 
-			pop, }
+			pop,
+		}
 		rules["blockquote"]	= sequence { push("blockquote"), char('>'), anySpace, line, pop, }
 		rules["line"]		= sequence { text, eol(), }
-		rules["text"]		= oneOrMore( firstOf { italic1, italic2, bold1, bold2, codeSpan, anyCharNot('\n').withAction(addText), })
+		rules["text"]		= oneOrMore( firstOf { italic1, italic2, bold1, bold2, codeSpan, link, anyCharNot('\n').withAction(addText), })
 		
 		// suppress multiline bold and italics, 'cos it may in the middle of a list, or gawd knows where!
 		rules["italic1"]	= sequence { onlyIfNot(str("* ")), push("italic"), char('*'), oneOrMore(sequence { onlyIf(anyCharNot('\n')), anyCharNot('*'), }).withAction(addText), char('*'), pop, }
@@ -46,6 +48,12 @@ internal class MarkdownRules : TreeRules {
 		rules["bold1"]		= sequence { push("bold"), str("**"), oneOrMore(anyCharNotOf(['*', '\n'])).withAction(addText), str("**"), pop, }
 		rules["bold2"]		= sequence { push("bold"), str("__"), oneOrMore(anyCharNot('_')).withAction(addText), str("__"), pop, }
 		rules["code"]		= sequence { push("code"), char('`'), oneOrMore(sequence { onlyIf(anyCharNot('\n')), anyCharNot('`'), }).withAction(addText), char('`'), pop, }
+		rules["link"]		= sequence { 
+			push("link"), 
+			char('['), oneOrMore(sequence { onlyIf(anyCharNot('\n')), anyCharNot(']'), }).withAction(addAction("linkText")), char(']'), 
+			char('('), oneOrMore(sequence { onlyIf(anyCharNot('\n')), anyCharNot(')'), }).withAction(addAction("linkHref")), char(')'), 
+			pop,
+		}
 
 		return statement
 	}
@@ -117,17 +125,26 @@ const class MarkdownParser {
 					case "bold":
 					case "code":
 						pop()
+					
 					case "pre":
 						heading := (Pre) elems.last
 						text	:= (DocText?) heading.children.last
 						text.str = text.str.trimEnd
 						pop()
+					
 					case "heading":
 						// tidy up trailing hashes --> ## h2 ##
 						heading := (Heading) elems.last
 						text	:= (DocText?) heading.children.last
 						while (text?.str?.endsWith("#") ?: false)
 							text.str = text.str[0..<-1].trimEnd
+						pop()
+					
+					case "link":
+						text := item.items.find { it.type == "linkText" }.matched
+						href := item.items.find { it.type == "linkHref" }.matched
+						push(Link(href))
+						add(DocText(text))
 						pop()
 				}
 			}
