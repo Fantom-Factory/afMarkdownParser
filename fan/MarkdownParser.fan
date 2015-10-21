@@ -17,7 +17,7 @@ internal class MarkdownRules : TreeRules {
 		bold2			:= rules["bold2"]
 		italic1			:= rules["italic1"]
 		italic2			:= rules["italic2"]
-		codeSpan		:= rules["italic2"]
+		codeSpan		:= rules["codeSpan"]
 
 		eol				:= firstOf { char('\n'), eos }
 		anySpace		:= zeroOrMore(anyCharOf([' ', '\t']))
@@ -27,17 +27,18 @@ internal class MarkdownRules : TreeRules {
 		rules["heading"]	= sequence { between(1..4, char('#')).withAction(pushHeading), onlyIf(anyCharNot('#')), anySpace, line, pop, }
 		rules["blockquote"]	= sequence { push("blockquote"), char('>'), anySpace, line, pop, }
 		rules["line"]		= sequence { text, eol, }
-		rules["text"]		= oneOrMore( firstOf { italic1, italic2, bold1, bold2, anyCharNot('\n').withAction(addText), })
+		rules["text"]		= oneOrMore( firstOf { italic1, italic2, bold1, bold2, codeSpan, anyCharNot('\n').withAction(addText), })
 		
 		// suppress multiline bold and italics, 'cos it may in the middle of a list, or gawd knows where!
 		rules["italic1"]	= sequence { onlyIfNot(str("* ")), push("italic"), char('*'), oneOrMore(sequence { onlyIf(anyCharNot('\n')), anyCharNot('*'), }).withAction(addText), char('*'), pop, }
 		rules["italic2"]	= sequence { onlyIfNot(str("_ ")), push("italic"), char('_'), oneOrMore(sequence { onlyIf(anyCharNot('\n')), anyCharNot('_'), }).withAction(addText), char('_'), pop, }
 		rules["bold1"]		= sequence { push("bold"), str("**"), oneOrMore(anyCharNotOf(['*', '\n'])).withAction(addText), str("**"), pop, }
 		rules["bold2"]		= sequence { push("bold"), str("__"), oneOrMore(anyCharNot('_')).withAction(addText), str("__"), pop, }
-		
+		rules["codeSpan"]	= sequence { push("codeSpan"), char('`'), oneOrMore(sequence { onlyIf(anyCharNot('\n')), anyCharNot('`'), }).withAction(addText), char('`'), pop, }
+
 		return statement
 	}
-	
+
 	|Str matched, Obj? ctx| addText() {
 		|Str matched, TreeCtx ctx| {
 			peek := ctx.peek.items.peek
@@ -92,6 +93,7 @@ const class MarkdownParser {
 					case "heading"		: push(Heading(item.data))
 					case "italic"		: push(Emphasis())
 					case "bold"			: push(Strong())
+					case "codeSpan"		: push(Code())
 					case "text"			: add(DocText(item.matched))
 				}
 			},
@@ -101,6 +103,7 @@ const class MarkdownParser {
 					case "blockquote":
 					case "italic":
 					case "bold":
+					case "codeSpan":
 						pop()
 					case "heading":
 						// tidy up trailing hashes --> ## h2 ##
@@ -112,7 +115,7 @@ const class MarkdownParser {
 				}
 			}
 		)
-			
+
 		return elems.first
 	}
 }
