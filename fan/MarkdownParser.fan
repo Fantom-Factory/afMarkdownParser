@@ -12,6 +12,7 @@ internal class MarkdownRules : TreeRules {
 		heading			:= rules["heading"]
 		blockquote		:= rules["blockquote"]
 		pre				:= rules["pre"]
+		image			:= rules["image"]
 		line			:= rules["line"]
 		bold1			:= rules["bold1"]
 		bold2			:= rules["bold2"]
@@ -21,11 +22,11 @@ internal class MarkdownRules : TreeRules {
 		link			:= rules["link"]
 		text			:= rules["text"]
 
-		eol				:= |->Rule| { firstOf { char('\n'), eos } }
+		eol				:= firstOf { char('\n'), eos }
 		anySpace		:= zeroOrMore(anyCharOf([' ', '\t']))
 		
-		rules["statement"]	= firstOf { heading, pre, blockquote, paragraph, eol(), }
-		rules["paragraph"]	= sequence { push("paragraph"), oneOrMore(line), eol(), pop, }
+		rules["statement"]	= firstOf { heading, pre, blockquote, image, paragraph, eol, }
+		rules["paragraph"]	= sequence { push("paragraph"), oneOrMore(line), eol, pop, }
 		rules["heading"]	= sequence { between(1..4, char('#')).withAction(pushHeading), onlyIf(anyCharNot('#')), anySpace, line, pop, }
 		rules["pre"]		= sequence { 
 			push("pre"),
@@ -39,7 +40,7 @@ internal class MarkdownRules : TreeRules {
 			pop,
 		}
 		rules["blockquote"]	= sequence { push("blockquote"), char('>'), anySpace, line, pop, }
-		rules["line"]		= sequence { text, eol(), }
+		rules["line"]		= sequence { text, eol, }
 		rules["text"]		= oneOrMore( firstOf { italic1, italic2, bold1, bold2, codeSpan, link, anyCharNot('\n').withAction(addText), })
 		
 		// suppress multiline bold and italics, 'cos it may in the middle of a list, or gawd knows where!
@@ -52,6 +53,14 @@ internal class MarkdownRules : TreeRules {
 			push("link"), 
 			char('['), oneOrMore(sequence { onlyIf(anyCharNot('\n')), anyCharNot(']'), }).withAction(addAction("linkText")), char(']'), 
 			char('('), oneOrMore(sequence { onlyIf(anyCharNot('\n')), anyCharNot(')'), }).withAction(addAction("linkHref")), char(')'), 
+			pop,
+		}
+		rules["image"]		= sequence { 
+			push("image"),
+			char('!'),
+			char('['), oneOrMore(sequence { onlyIf(anyCharNot('\n')), anyCharNot(']'), }).withAction(addAction("imageAlt")), char(']'), 
+			char('('), oneOrMore(sequence { onlyIf(anyCharNot('\n')), anyCharNot(')'), }).withAction(addAction("imageSrc")), char(')'),
+			anySpace, eol,
 			pop,
 		}
 
@@ -145,6 +154,19 @@ const class MarkdownParser {
 						href := item.items.find { it.type == "linkHref" }.matched
 						push(Link(href))
 						add(DocText(text))
+						pop()
+
+					case "link":
+						text := item.items.find { it.type == "linkText" }.matched
+						href := item.items.find { it.type == "linkHref" }.matched
+						push(Link(href))
+						add(DocText(text))
+						pop()
+
+					case "image":
+						alt := item.items.find { it.type == "imageAlt" }.matched
+						src := item.items.find { it.type == "imageSrc" }.matched
+						push(Image(src, alt))
 						pop()
 				}
 			}
