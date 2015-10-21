@@ -12,6 +12,9 @@ Features:
  - Bold and italics
  - Code blocks and code spans
 
+This markdown implementation is known to be incomplete (e.g. you can't backslash escape the '*' and '_' characters, and reference links aren't parsed) but it should be usable to 99% of casual users.
+
+
 
 Quick Start
 ***********
