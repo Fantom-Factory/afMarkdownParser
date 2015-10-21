@@ -1,12 +1,37 @@
 Overview
 ********
+Parses basic markdown text into Fandoc objects.
 
+Features:
+
+ - Headings
+ - Paragraphs
+ - Block quotes
+ - Lists (ordered and unordered)
+ - Links and images
+ - Bold and italics
+ - Code blocks and code spans
 
 
 Quick Start
 ***********
 
+A Cheatsheet of supported markdown syntax:
 
-Peggar new:
-EOS rule
-Actions take ctx obj
+pre>
+# Heading 1
+
+## Heading 2
+
+### Heading 3
+
+#### Heading 4
+
+This is *italic* and so is _this_
+This is **bold** and so is __this__
+
+These are just * stars * and _ stripes _
+
+> This is a block quote.
+
+<pre

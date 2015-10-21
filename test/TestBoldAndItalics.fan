@@ -16,6 +16,19 @@ internal class TestBoldAndItalics : MarkdownTest {
 //		verifyEq(html.trim, parseToHtml(markdown))		
 	}
 
+	Void testItalicDoesNotSpanLines() {
+		// there's a case that bold / italics should be allowed to span lines but not paragraphs,
+		// but then what of lists, headings, and block quotes, each with different section endings.
+		// It then gets too tricky. Easier to just ban them!
+		markdown := "Look, I'm *not \nitalic*!!"
+		html 	 := "<p>Look, I'm *not italic*!!</p>"
+		verifyEq(html.trim, parseToHtml(markdown))
+
+		markdown = "Look, I'm _not \nitalic_!!"
+		html 	 = "<p>Look, I'm _not italic_!!</p>"
+		verifyEq(html.trim, parseToHtml(markdown))
+	}
+
 	Void testItalicUnderscore() {
 		markdown := "Look, I'm _italic_!!"
 		html 	 := "<p>Look, I'm <em>italic</em>!!</p>"
@@ -32,7 +45,7 @@ internal class TestBoldAndItalics : MarkdownTest {
 	}
 
 	Void testBoldStars() {
-//				Log.get("afPegger").level = LogLevel.debug
+//		Log.get("afPegger").level = LogLevel.debug
 
 		markdown := "Look, I'm **bold**!!"
 		html 	 := "<p>Look, I'm <strong>bold</strong>!!</p>"
