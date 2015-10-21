@@ -17,16 +17,27 @@ internal class MarkdownRules : TreeRules {
 		bold2			:= rules["bold2"]
 		italic1			:= rules["italic1"]
 		italic2			:= rules["italic2"]
-		codeSpan		:= rules["codeSpan"]
+		codeSpan		:= rules["code"]
+		pre				:= rules["pre"]
 
-		eol				:= firstOf { char('\n'), eos }
+		eol				:= |->Rule| { firstOf { char('\n'), eos } }
 		anySpace		:= zeroOrMore(anyCharOf([' ', '\t']))
 		
-		rules["statement"]	= firstOf { heading, blockquote, paragraph, eol, }
-		rules["paragraph"]	= sequence { push("paragraph"), oneOrMore(line), eol, pop, }
+		rules["statement"]	= firstOf { heading, pre, blockquote, paragraph, eol(), }
+		rules["paragraph"]	= sequence { push("paragraph"), oneOrMore(line), eol(), pop, }
 		rules["heading"]	= sequence { between(1..4, char('#')).withAction(pushHeading), onlyIf(anyCharNot('#')), anySpace, line, pop, }
+		rules["pre"]		= sequence { 
+			push("pre"),
+			oneOf(sequence {
+				sequence { str("    "), oneOrMore(anyCharNot('\n')), char('\n'), }, 
+				oneOrMore( firstOf { 
+					sequence { str("    "), oneOrMore(anyCharNot('\n')), char('\n'), }, 
+					sequence { between(0..4, char(' ')), char('\n'), },
+				} ),
+			} ).withAction(addText), 
+			pop, }
 		rules["blockquote"]	= sequence { push("blockquote"), char('>'), anySpace, line, pop, }
-		rules["line"]		= sequence { text, eol, }
+		rules["line"]		= sequence { text, eol(), }
 		rules["text"]		= oneOrMore( firstOf { italic1, italic2, bold1, bold2, codeSpan, anyCharNot('\n').withAction(addText), })
 		
 		// suppress multiline bold and italics, 'cos it may in the middle of a list, or gawd knows where!
@@ -34,7 +45,7 @@ internal class MarkdownRules : TreeRules {
 		rules["italic2"]	= sequence { onlyIfNot(str("_ ")), push("italic"), char('_'), oneOrMore(sequence { onlyIf(anyCharNot('\n')), anyCharNot('_'), }).withAction(addText), char('_'), pop, }
 		rules["bold1"]		= sequence { push("bold"), str("**"), oneOrMore(anyCharNotOf(['*', '\n'])).withAction(addText), str("**"), pop, }
 		rules["bold2"]		= sequence { push("bold"), str("__"), oneOrMore(anyCharNot('_')).withAction(addText), str("__"), pop, }
-		rules["codeSpan"]	= sequence { push("codeSpan"), char('`'), oneOrMore(sequence { onlyIf(anyCharNot('\n')), anyCharNot('`'), }).withAction(addText), char('`'), pop, }
+		rules["code"]		= sequence { push("code"), char('`'), oneOrMore(sequence { onlyIf(anyCharNot('\n')), anyCharNot('`'), }).withAction(addText), char('`'), pop, }
 
 		return statement
 	}
@@ -91,9 +102,10 @@ const class MarkdownParser {
 							repush()
 					case "paragraph"	: push(Para())
 					case "heading"		: push(Heading(item.data))
+					case "pre"			: push(Pre())
 					case "italic"		: push(Emphasis())
 					case "bold"			: push(Strong())
-					case "codeSpan"		: push(Code())
+					case "code"			: push(Code())
 					case "text"			: add(DocText(item.matched))
 				}
 			},
@@ -103,7 +115,12 @@ const class MarkdownParser {
 					case "blockquote":
 					case "italic":
 					case "bold":
-					case "codeSpan":
+					case "code":
+						pop()
+					case "pre":
+						heading := (Pre) elems.last
+						text	:= (DocText?) heading.children.last
+						text.str = text.str.trimEnd
 						pop()
 					case "heading":
 						// tidy up trailing hashes --> ## h2 ##
