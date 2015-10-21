@@ -17,7 +17,7 @@ internal class MarkdownRules : TreeRules {
 		bold2			:= rules["bold2"]
 		italic1			:= rules["italic1"]
 		italic2			:= rules["italic2"]
-		textChar		:= rules["textChar"]
+		codeSpan		:= rules["italic2"]
 
 		eol				:= firstOf { char('\n'), eos }
 		anySpace		:= zeroOrMore(anyCharOf([' ', '\t']))
@@ -30,16 +30,22 @@ internal class MarkdownRules : TreeRules {
 		rules["text"]		= oneOrMore( firstOf { italic1, italic2, bold1, bold2, anyCharNot('\n').withAction(addText), })
 		
 		// suppress multiline bold and italics, 'cos it may in the middle of a list, or gawd knows where!
-		rules["italic1"]	= sequence { onlyIfNot(str("* ")), push("italic"), char('*'), oneOrMore(anyCharNot('*')).withAction(addText), char('*'), pop, }
-		rules["italic2"]	= sequence { onlyIfNot(str("_ ")), push("italic"), char('_'), oneOrMore(anyCharNot('_')).withAction(addText), char('_'), pop, }
-		rules["bold1"]		= sequence { push("bold"), str("**"), oneOrMore(anyCharNot('*')).withAction(addText), str("**"), pop, }
+		rules["italic1"]	= sequence { onlyIfNot(str("* ")), push("italic"), char('*'), oneOrMore(sequence { onlyIf(anyCharNot('\n')), anyCharNot('*'), }).withAction(addText), char('*'), pop, }
+		rules["italic2"]	= sequence { onlyIfNot(str("_ ")), push("italic"), char('_'), oneOrMore(sequence { onlyIf(anyCharNot('\n')), anyCharNot('_'), }).withAction(addText), char('_'), pop, }
+		rules["bold1"]		= sequence { push("bold"), str("**"), oneOrMore(anyCharNotOf(['*', '\n'])).withAction(addText), str("**"), pop, }
 		rules["bold2"]		= sequence { push("bold"), str("__"), oneOrMore(anyCharNot('_')).withAction(addText), str("__"), pop, }
 		
 		return statement
 	}
 	
 	|Str matched, Obj? ctx| addText() {
-		addAction("text")
+		|Str matched, TreeCtx ctx| {
+			peek := ctx.peek.items.peek
+			if (peek?.type == "text")
+				peek.matched += matched
+			else
+				ctx.add("text", matched)
+		}
 	}
 
 	|Str matched, Obj? ctx| pushHeading() {
