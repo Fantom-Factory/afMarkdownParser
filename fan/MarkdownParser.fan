@@ -12,6 +12,8 @@ internal class MarkdownRules : TreeRules {
 		heading			:= rules["heading"]
 		blockquote		:= rules["blockquote"]
 		pre				:= rules["pre"]
+		ul				:= rules["ul"]
+		li1				:= rules["li1"]
 		image			:= rules["image"]
 		line			:= rules["line"]
 		bold1			:= rules["bold1"]
@@ -23,9 +25,10 @@ internal class MarkdownRules : TreeRules {
 		text			:= rules["text"]
 
 		eol				:= firstOf { char('\n'), eos }
-		anySpace		:= zeroOrMore(anyCharOf([' ', '\t']))
+		space			:= anyCharOf([' ', '\t'])
+		anySpace		:= zeroOrMore(space)
 		
-		rules["statement"]	= firstOf { heading, pre, blockquote, image, paragraph, eol, }
+		rules["statement"]	= firstOf { heading, ul, pre, blockquote, image, paragraph, eol, }
 		rules["paragraph"]	= sequence { push("paragraph"), oneOrMore(line), eol, pop, }
 		rules["heading"]	= sequence { between(1..4, char('#')).withAction(pushHeading), onlyIf(anyCharNot('#')), anySpace, line, pop, }
 		rules["pre"]		= sequence { 
@@ -39,6 +42,20 @@ internal class MarkdownRules : TreeRules {
 			} ).withAction(addText), 
 			pop,
 		}
+		
+		rules["ul"]			= sequence { 
+			push("ul"),
+			oneOrMore(sequence {				
+				push("li"),
+				between(0..3, space),
+				anyCharOf("*+-".chars),
+				oneOrMore(space),
+				line, 
+				pop,
+			}),
+			pop, 
+		}
+		
 		rules["blockquote"]	= sequence { push("blockquote"), char('>'), anySpace, line, pop, }
 		rules["line"]		= sequence { text, eol, }
 		rules["text"]		= oneOrMore( firstOf { italic1, italic2, bold1, bold2, codeSpan, link, anyCharNot('\n').withAction(addText), })
@@ -120,6 +137,8 @@ const class MarkdownParser {
 					case "paragraph"	: push(Para())
 					case "heading"		: push(Heading(item.data))
 					case "pre"			: push(Pre())
+					case "ul"			: push(UnorderedList())
+					case "li"			: push(ListItem())
 					case "italic"		: push(Emphasis())
 					case "bold"			: push(Strong())
 					case "code"			: push(Code())
@@ -130,6 +149,8 @@ const class MarkdownParser {
 				switch (item.type) {
 					case "paragraph":
 					case "blockquote":
+					case "ul":
+					case "li":
 					case "italic":
 					case "bold":
 					case "code":

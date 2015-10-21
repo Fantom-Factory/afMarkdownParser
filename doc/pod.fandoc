@@ -12,6 +12,8 @@ Features:
  - Bold and italics
  - Code blocks and code spans
 
+Markdown Parser uses the extensible Parsing Expression Grammer as provider by [Pegger]`pod:Pegger`.
+
 This markdown implementation is known to be incomplete (e.g. you can't backslash escape the '*' and '_' characters, and reference links aren't parsed) but it should be usable to 99% of casual users.
 
 
@@ -35,6 +37,18 @@ This is **bold** and so is __this__
 
 These are just * stars * and _ stripes _
 
-> This is a block quote.
+This is a `sampleCode` span
+
+    Void main() {
+        echo("This is a code block")
+    }
+
+This is a link to [Fantom-Factory](http://www.fantomfactory.org/)
+
+![Fanny the Fantom Image](http://www.fantomfactory.org/fanny.png)
+
+> This is a block quote. - said Fanny
+
+
 
 <pre
