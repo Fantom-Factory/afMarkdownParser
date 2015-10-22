@@ -13,7 +13,7 @@ internal class MarkdownRules : TreeRules {
 		blockquote		:= rules["blockquote"]
 		pre				:= rules["pre"]
 		ul				:= rules["ul"]
-		li1				:= rules["li1"]
+		ol				:= rules["ol"]
 		image			:= rules["image"]
 		line			:= rules["line"]
 		bold1			:= rules["bold1"]
@@ -28,7 +28,7 @@ internal class MarkdownRules : TreeRules {
 		space			:= anyCharOf([' ', '\t'])
 		anySpace		:= zeroOrMore(space)
 		
-		rules["statement"]	= firstOf { heading, ul, pre, blockquote, image, paragraph, eol, }
+		rules["statement"]	= firstOf { heading, ul, ol, pre, blockquote, image, paragraph, eol, }
 		rules["paragraph"]	= sequence { push("paragraph"), oneOrMore(line), eol, pop, }
 		rules["heading"]	= sequence { between(1..4, char('#')).withAction(pushHeading), onlyIf(anyCharNot('#')), anySpace, line, pop, }
 		rules["pre"]		= sequence { 
@@ -45,12 +45,33 @@ internal class MarkdownRules : TreeRules {
 		
 		rules["ul"]			= sequence { 
 			push("ul"),
-			oneOrMore(sequence {				
+			oneOrMore(sequence {
 				push("li"),
 				between(0..3, space),
-				anyCharOf("*+-".chars),
-				oneOrMore(space),
+				anyCharOf("*+-".chars),	oneOrMore(space),
 				line, 
+				zeroOrMore( sequence { 
+					between(0..5, space),
+					onlyIfNot(sequence { anyCharOf("*+-".chars), oneOrMore(space)}),
+					line,					
+				}),
+				pop,
+			}),
+			pop, 
+		}
+
+		rules["ol"]			= sequence { 
+			push("ol"),
+			oneOrMore(sequence {
+				push("li"),
+				between(0..3, space),
+				oneOrMore(anyNumChar), char('.'), oneOrMore(space),
+				line, 
+				zeroOrMore( sequence { 
+					between(0..5, space),
+					onlyIfNot( sequence { oneOrMore(anyNumChar), char('.'), oneOrMore(space), }),
+					line,					
+				}),
 				pop,
 			}),
 			pop, 
@@ -138,6 +159,7 @@ const class MarkdownParser {
 					case "heading"		: push(Heading(item.data))
 					case "pre"			: push(Pre())
 					case "ul"			: push(UnorderedList())
+					case "ol"			: push(OrderedList(OrderedListStyle.number))
 					case "li"			: push(ListItem())
 					case "italic"		: push(Emphasis())
 					case "bold"			: push(Strong())
@@ -150,6 +172,7 @@ const class MarkdownParser {
 					case "paragraph":
 					case "blockquote":
 					case "ul":
+					case "ol":
 					case "li":
 					case "italic":
 					case "bold":

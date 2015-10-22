@@ -1,21 +1,21 @@
 
-internal class TestUnorderedLists : MarkdownTest {
+internal class TestOrderedLists : MarkdownTest {
 	
-	Void testUnorderedLists() {
+	Void testOrderedLists() {
 		markdown :=
-"* Red
-  + Green
-   - Blue
+"3. Red
+  1. Green
+   8. Blue
  "
 
 		html :=
-"<ul>
+"<ol style='list-style-type:decimal'>
  <li>Red</li>
  
  <li>Green</li>
  
  <li>Blue</li>
- </ul>
+ </ol>
  "
 		verifyEq(html.trim, parseToHtml(markdown))
 	}
@@ -24,15 +24,15 @@ internal class TestUnorderedLists : MarkdownTest {
 		Log.get("afPegger").level = LogLevel.debug
 
 		markdown :=
-"  * Red, 
+"  1. Red, 
      Green, 
      Blue
  "
 
 		html :=
-"<ul>
+"<ol style='list-style-type:decimal'>
  <li>Red, Green, Blue</li>
- </ul>
+ </ol>
  "
 		verifyEq(html.trim, parseToHtml(markdown))
 	}
@@ -41,15 +41,15 @@ internal class TestUnorderedLists : MarkdownTest {
 		Log.get("afPegger").level = LogLevel.debug
 
 		markdown :=
-"  * Red, 
+"  1. Red, 
  Green, 
  Blue
  "
 
 		html :=
-"<ul>
+"<ol style='list-style-type:decimal'>
  <li>Red, Green, Blue</li>
- </ul>
+ </ol>
  "
 		verifyEq(html.trim, parseToHtml(markdown))
 	}
