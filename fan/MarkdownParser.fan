@@ -44,7 +44,7 @@ internal class MarkdownRules : TreeRules {
 		}
 		
 		rules["ul"]			= sequence { 
-			push("ul"),
+			doAction(pushUl),
 			oneOrMore(sequence {
 				push("li"),
 				between(0..3, space),
@@ -55,7 +55,7 @@ internal class MarkdownRules : TreeRules {
 					onlyIfNot(sequence { anyCharOf("*+-".chars), oneOrMore(space)}),
 					line,					
 				}),
-				pop,
+				doAction(popToLi),
 			}),
 			pop, 
 		}
@@ -116,7 +116,28 @@ internal class MarkdownRules : TreeRules {
 	}
 
 	|Str matched, Obj? ctx| pushHeading() {
-		|Str matched, Obj? ctx| { ((TreeCtx) ctx).push("heading", matched, matched.size) }
+		|Str matched, TreeCtx ctx| { ctx.push("heading", matched, matched.size) }
+	}
+
+	|Str matched, Obj? ctx| pushUl() {
+		|Str matched, TreeCtx ctx| {
+			ul := ctx.items.last?.items?.peek 
+			if (ul?.type == "ul") {
+				li  := ul.items.last
+				txt := li.items.dup
+				li.items.clear.add(TreeItem("p")).last.items = txt
+				ul.items.add(TreeItem("li")).last.add(TreeItem("p"))
+			} else 
+				ctx.push("ul", matched)
+		}
+	}
+
+	|Str matched, Obj? ctx| popToLi() {
+		|Str matched, TreeCtx ctx| {
+			while (ctx.items.last.type != "li")
+				ctx.pop
+			ctx.pop
+		}
 	}
 }
 

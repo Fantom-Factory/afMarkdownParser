@@ -26,6 +26,6 @@ internal class TestPre : MarkdownTest {
  
  <p>This is a para</p>
  "
-		verifyEq(html.trim, parseToHtml(markdown))
+		verifyEq(html.trim, parseToHtml(markdown, false))
 	}
 }

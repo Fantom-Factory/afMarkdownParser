@@ -15,11 +15,8 @@ internal class TestBlockQuotes : MarkdownTest {
  "
 		html :=
 "<p>para 1</p>
- 
  <blockquote>Pardon my frenchPardon my dutch</blockquote>
- 
  <p>para 2</p>
- 
  <blockquote>Pardon my german Pardon my spanish</blockquote>
  "
 		verifyEq(html.trim, parseToHtml(markdown))
