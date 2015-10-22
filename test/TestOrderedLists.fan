@@ -11,9 +11,7 @@ internal class TestOrderedLists : MarkdownTest {
 		html :=
 "<ol style='list-style-type:decimal'>
  <li>Red</li>
- 
  <li>Green</li>
- 
  <li>Blue</li>
  </ol>
  "
@@ -21,8 +19,6 @@ internal class TestOrderedLists : MarkdownTest {
 	}
 
 	Void testHangingIndents() {
-		Log.get("afPegger").level = LogLevel.debug
-
 		markdown :=
 "  1. Red, 
      Green, 
@@ -38,8 +34,6 @@ internal class TestOrderedLists : MarkdownTest {
 	}
 
 	Void testLazyIndents() {
-		Log.get("afPegger").level = LogLevel.debug
-
 		markdown :=
 "  1. Red, 
  Green, 

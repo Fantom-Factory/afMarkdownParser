@@ -15,9 +15,7 @@ internal class TestParagraph : MarkdownTest {
  "
 		html :=
 "<p>Paragraphs are very easy; separate them with a blank line. You can write your paragraph on one long line,or you canwrap the lines yourselfif you prefer.</p>
- 
  <p>para 2</p>
- 
  <p>para 3</p>
  "
 		verifyEq(html.trim, parseToHtml(markdown))
