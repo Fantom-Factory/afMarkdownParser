@@ -9,7 +9,8 @@ internal class MarkdownTest : Test {
 		fandoc	:= parser.toFandoc(tree) 
 		buf		:= StrBuf()
 		fandoc.writeChildren(HtmlDocWriter(buf.out))
-		echo(buf.toStr)
-		return buf.toStr.replace("\n\n", trimLines ? "\n" : "\n\n").trim
+		html	:= buf.toStr.replace("\n\n", trimLines ? "\n" : "\n\n").trim
+		echo(html)
+		return html
 	}
 }

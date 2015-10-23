@@ -44,9 +44,9 @@ internal class MarkdownRules : TreeRules {
 		}
 		
 		rules["ul"]			= sequence { 
-			doAction(pushUl),
+			push("ul"),
 			oneOrMore(sequence {
-				push("li"),
+				doAction(pushLi),
 				between(0..3, space),
 				anyCharOf("*+-".chars),	oneOrMore(space),
 				line, 
@@ -55,7 +55,7 @@ internal class MarkdownRules : TreeRules {
 					onlyIfNot(sequence { anyCharOf("*+-".chars), oneOrMore(space)}),
 					line,					
 				}),
-				doAction(popToLi),
+				pop("li"),
 			}),
 			pop, 
 		}
@@ -63,7 +63,7 @@ internal class MarkdownRules : TreeRules {
 		rules["ol"]			= sequence { 
 			push("ol"),
 			oneOrMore(sequence {
-				push("li"),
+				doAction(pushLi),
 				between(0..3, space),
 				oneOrMore(anyNumChar), char('.'), oneOrMore(space),
 				line, 
@@ -72,7 +72,7 @@ internal class MarkdownRules : TreeRules {
 					onlyIfNot( sequence { oneOrMore(anyNumChar), char('.'), oneOrMore(space), }),
 					line,					
 				}),
-				pop,
+				pop("li"),
 			}),
 			pop, 
 		}
@@ -107,11 +107,10 @@ internal class MarkdownRules : TreeRules {
 
 	|Str matched, Obj? ctx| addText() {
 		|Str matched, TreeCtx ctx| {
-			peek := ctx.peek.items.peek
-			if (peek?.type == "text")
-				peek.matched += matched
+			if (ctx.current.items.last?.type == "text")
+				ctx.current.items.last.matched += matched
 			else
-				ctx.add("text", matched)
+				ctx.current.add("text", matched)
 		}
 	}
 
@@ -119,30 +118,30 @@ internal class MarkdownRules : TreeRules {
 		|Str matched, TreeCtx ctx| { ctx.push("heading", matched, matched.size) }
 	}
 
-	|Str matched, Obj? ctx| pushUl() {
+	|Str matched, Obj? ctx| pushLi() {
 		|Str matched, TreeCtx ctx| {
-			ul := ctx.items.last?.items?.peek 
-			if (ul?.type == "ul") {
+			ul := ctx.current.prev
+			if (ul?.type == "ul" || ul?.type == "ol") {
+				// merge the two ul's
+				ctx.current.parent.items.remove(ctx.current)
+				ctx.current = ul
+				
+				// enclose the previous li in a p
 				li  := ul.items.last
 				txt := li.items.dup
-				li.items.clear.add(TreeItem("p")).last.items = txt
-				ul.items.add(TreeItem("li")).last.add(TreeItem("p"))
+				li.items.clear
+				p   := li.add("paragraph")
+				txt.each { p.addItem(it) }
+				
+				ctx.push("li").push("paragraph")
 			} else 
-				ctx.push("ul", matched)
-		}
-	}
-
-	|Str matched, Obj? ctx| popToLi() {
-		|Str matched, TreeCtx ctx| {
-			while (ctx.items.last.type != "li")
-				ctx.pop
-			ctx.pop
+				ctx.push("li", matched)
 		}
 	}
 }
 
 const class MarkdownParser {
-	
+
 	Doc parse(Str markdown) {
 		toFandoc(parseTree(markdown))
 	}
