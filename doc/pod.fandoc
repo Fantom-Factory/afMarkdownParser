@@ -1,8 +1,8 @@
 Overview
 ********
-Parses basic markdown text into Fandoc objects.
+Parses Markdown text into Fandoc objects.
 
-Features:
+Supported Markdown syntax:
 
  - Headings
  - Paragraphs
@@ -12,16 +12,23 @@ Features:
  - Bold and italics
  - Code blocks and code spans
 
-Markdown Parser uses the extensible Parsing Expression Grammer as provider by [Pegger]`pod:Pegger`.
+Markdown Parser uses the extensible Parsing Expression Grammer as provider by [Pegger]`pod:afPegger`.
 
-This markdown implementation is known to be incomplete (e.g. you can't backslash escape the '*' and '_' characters, and reference links aren't parsed) but it should be usable to 99% of casual users.
+Note that this markdown implementation is known to be incomplete. For example, it does not support reference links or backslash escaping '*' and '_' characters. But it should be usable to most casual users.
 
 
 
-Quick Start
-***********
+Usage
+*****
+1 class - 1 method - 1 argument - 1 return value.
 
-A Cheatsheet of supported markdown syntax:
+It's pretty self explanatory!
+
+
+
+Cheatsheet
+**********
+A cheatsheet of supported markdown syntax:
 
 pre>
 # Heading 1
@@ -33,11 +40,12 @@ pre>
 #### Heading 4
 
 This is *italic* and so is _this_
+
 This is **bold** and so is __this__
 
 These are just * stars * and _ stripes _
 
-This is a `sampleCode` span
+This is a `code` span
 
     Void main() {
         echo("This is a code block")
@@ -49,9 +57,29 @@ This is a link to [Fantom-Factory](http://www.fantomfactory.org/)
 
 > This is a block quote. - said Fanny
 
+ * An unordered list
+ * An unordered list
+ * An unordered list
 
-
+ 1. An ordered list
+ 1. An ordered list
+ 1. An ordered list
 <pre
 
 
-Give example of how to print fandoc / markdown / html
+
+Html
+****
+To convert Markdown to HTML use the 'HtmlDocWriter' class to print fandoc 'Doc' objects.
+
+pre>
+syntax: fantom
+
+fandoc := MarkdownParser().parse("...markdown...")
+buf    := StrBuf()
+fandoc.writeChildren(HtmlDocWriter(buf.out))
+html   := buf.toStr
+<pre
+
+Note that Fantom also ships with a 'FandocDocWriter' and a 'MarkdownDocWriter'.
+
