@@ -23,13 +23,14 @@ internal class MarkdownRules : TreeRules {
 		link			:= rules["link"]
 		text			:= rules["text"]
 
-		eol				:= firstOf { char('\n'), eos }
 		space			:= anyCharOf([' ', '\t'])
 		anySpace		:= zeroOrMore(space)
+		eol				:= firstOf { char('\n'), eos }
+		blankLine		:= sequence { anySpace, eol, }
 		
 		rules["statement"]	= firstOf { heading, ul, ol, pre, blockquote, image, paragraph, eol, }
 		rules["heading"]	= sequence { between(1..4, char('#')).withAction(pushHeading.action), onlyIf(anyCharNot('#')), anySpace, line, popHeading, }
-		rules["paragraph"]	= sequence { push("paragraph"), oneOrMore(line), eol, pop, }
+		rules["paragraph"]	= sequence { push("paragraph"), oneOrMore(line), blankLine, pop, }
 		rules["blockquote"]	= sequence { pushBlockquote, char('>'), anySpace, line, pop, }
 		rules["pre"]		= sequence { 
 			push("pre"),
@@ -77,7 +78,7 @@ internal class MarkdownRules : TreeRules {
 			pop, 
 		}
 		
-		rules["line"]		= sequence { text, eol, }
+		rules["line"]		= sequence { onlyIfNot( blankLine ), text, eol, }
 		rules["text"]		= oneOrMore( firstOf { italic1, italic2, bold1, bold2, codeSpan, link, anyCharNot('\n').withAction(addText), })
 		
 		// suppress multiline bold and italics, 'cos it may in the middle of a list, or gawd knows where!
