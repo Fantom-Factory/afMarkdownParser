@@ -27,9 +27,6 @@ const class MarkdownParser {
 		pop   := |->| {
 			elems.pop
 		}
-		repush := |->| {
-			elems.push(elems.last.children.last)
-		} 
 	
 		tree.root.walk(
 			|TreeItem item| {

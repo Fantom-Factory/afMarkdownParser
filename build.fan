@@ -9,8 +9,8 @@ class Build : BuildPod {
 
 		meta = [	
 			"proj.name"		: "Markdown Parser",
-			"repo.tags"		: "misc",
 			"repo.internal"	: "true",
+			"repo.tags"		: "misc",
 			"repo.public"	: "false"
 		]
 
