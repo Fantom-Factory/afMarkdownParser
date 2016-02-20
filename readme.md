@@ -1,14 +1,14 @@
-#Markdown Parser v0.0.0
+#Markdown Parser v0.0.2
 ---
 [![Written in: Fantom](http://img.shields.io/badge/written%20in-Fantom-lightgray.svg)](http://fantom.org/)
-[![pod: v0.0.0](http://img.shields.io/badge/pod-v0.0.0-yellow.svg)](http://www.fantomfactory.org/pods/afMarkdownParser)
+[![pod: v0.0.2](http://img.shields.io/badge/pod-v0.0.2-yellow.svg)](http://www.fantomfactory.org/pods/afMarkdownParser)
 ![Licence: MIT](http://img.shields.io/badge/licence-MIT-blue.svg)
 
 ## Overview
 
 *Markdown Parser is a support library that aids Alien-Factory in the development of other libraries, frameworks and applications. Though you are welcome to use it, you may find features are missing and the documentation incomplete.*
 
-Parses basic Markdown text into Fandoc objects.
+Parses Markdown text into Fandoc objects.
 
 Supported Markdown syntax:
 
@@ -22,13 +22,13 @@ Supported Markdown syntax:
 
 Markdown Parser uses the extensible Parsing Expression Grammer as provider by [Pegger](http://pods.fantomfactory.org/pods/afPegger).
 
-Note this markdown implementation is known to be incomplete (for example, it does not support backslash escaping `*` and `_` characters, and reference links) but it should be usable to 99% of casual users.
+Note that this markdown implementation is known to be incomplete. For example, it does not support reference links or backslash escaping `*` and `_` characters. But it should be usable to most casual users.
 
 ## Install
 
 Install `Markdown Parser` with the Fantom Repository Manager ( [fanr](http://fantom.org/doc/docFanr/Tool.html#install) ):
 
-    C:\> fanr install -r http://repo.status302.com/fanr/ afMarkdownParser
+    C:\> fanr install -r http://pods.fantomfactory.org/fanr/ afMarkdownParser
 
 To use in a [Fantom](http://fantom.org/) project, add a dependency to `build.fan`:
 
@@ -39,6 +39,12 @@ To use in a [Fantom](http://fantom.org/) project, add a dependency to `build.fan
 Full API & fandocs are available on the [Fantom Pod Repository](http://pods.fantomfactory.org/pods/afMarkdownParser/).
 
 ## Usage
+
+1 class - 1 method - 1 argument - 1 return value.
+
+It's pretty self explanatory!
+
+## Cheatsheet
 
 A cheatsheet of supported markdown syntax:
 
@@ -78,12 +84,16 @@ This is a link to [Fantom-Factory](http://www.fantomfactory.org/)
  1. An ordered list
 ```
 
-Give example of how to print fandoc / markdown / html
+## Html
+
+To convert Markdown to HTML use the `HtmlDocWriter` class to print fandoc `Doc` objects.
 
 ```
-fandoc  := MarkdownParser().parse("...markdown...")
-buf	    := StrBuf()
+fandoc := MarkdownParser().parse("...markdown...")
+buf    := StrBuf()
 fandoc.writeChildren(HtmlDocWriter(buf.out))
-html    := buf.toStr
+html   := buf.toStr
 ```
+
+Note that Fantom also ships with a `FandocDocWriter` and a `MarkdownDocWriter`.
 
