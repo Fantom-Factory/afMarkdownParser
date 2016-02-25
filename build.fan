@@ -11,7 +11,7 @@ class Build : BuildPod {
 			"proj.name"		: "Markdown Parser",
 			"afIoc.module"	: "afMarkdownParser::MarkdownModule",
 			"repo.internal"	: "true",
-			"repo.tags"		: "misc",
+			"repo.tags"		: "templating, misc",
 			"repo.public"	: "false"
 		]
 
