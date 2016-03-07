@@ -33,7 +33,7 @@ const class MarkdownParser {
 			|TreeItem item| {
 				switch (item.type) {
 					case "paragraph"	: push(Para())
-					case "heading"		: push(Heading(item.data))
+					case "heading"		: push(Heading(item.data->first) { it.anchorId = item.data->getSafe(1) })
 					case "blockquote"	: push(BlockQuote())
 					case "pre"			: push(Pre())
 					case "ul"			: push(UnorderedList())
@@ -59,13 +59,6 @@ const class MarkdownParser {
 					case "code":
 						pop()					
 					
-					case "link":
-						text := item.items.find { it.type == "linkText" }.matched
-						href := item.items.find { it.type == "linkHref" }.matched
-						push(Link(href))
-						add(DocText(text))
-						pop()
-
 					case "link":
 						text := item.items.find { it.type == "linkText" }.matched
 						href := item.items.find { it.type == "linkHref" }.matched

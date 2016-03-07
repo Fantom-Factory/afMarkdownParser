@@ -4,7 +4,7 @@ Parses Markdown text into Fandoc objects.
 
 Supported Markdown syntax:
 
- - Headings
+ - Headings (with anchor links)
  - Paragraphs
  - Block quotes
  - Lists (ordered and unordered)
@@ -22,6 +22,9 @@ Usage
 *****
 1 class - 1 method - 1 argument - 1 return value.
 
+  syntax: fantom
+  fandoc := MarkdownParser().parse("...markdown...")
+
 It's pretty self explanatory!
 
 
@@ -38,6 +41,8 @@ pre>
 ### Heading 3
 
 #### Heading 4
+
+#### <a name="id"></a> Heading with anchor tag
 
 This is *italic* and so is _this_
 
@@ -70,10 +75,12 @@ This is a link to [Fantom-Factory](http://www.fantomfactory.org/)
 
 Html
 ****
-To convert Markdown to HTML use the 'HtmlDocWriter' class to print fandoc 'Doc' objects.
+To convert Markdown to HTML use the [HtmlDocWriter]`fandoc::HtmlDocWriter` class from the core 'fandoc' pod:
 
 pre>
 syntax: fantom
+using afMarkdownParser
+using fandoc
 
 fandoc := MarkdownParser().parse("...markdown...")
 buf    := StrBuf()
@@ -81,5 +88,5 @@ fandoc.writeChildren(HtmlDocWriter(buf.out))
 html   := buf.toStr
 <pre
 
-Note that Fantom also ships with a 'FandocDocWriter' and a 'MarkdownDocWriter'.
+Note that Fantom also ships with a 'FandocDocWriter' and a 'MarkdownDocWriter' should you wish to print fandoc or markdown documents.
 
