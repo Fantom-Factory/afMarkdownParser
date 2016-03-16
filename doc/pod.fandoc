@@ -1,0 +1,92 @@
+Overview
+********
+Parses Markdown text into Fandoc objects.
+
+Supported Markdown syntax:
+
+ - Headings (with anchor links)
+ - Paragraphs
+ - Block quotes
+ - Lists (ordered and unordered)
+ - Links and images
+ - Bold and italics
+ - Code blocks and code spans
+
+Markdown Parser uses the extensible Parsing Expression Grammer as provider by [Pegger]`pod:afPegger`.
+
+Note that this markdown implementation is known to be incomplete. For example, it does not support reference links or backslash escaping '*' and '_' characters. But it should be usable to most casual users.
+
+
+
+Usage
+*****
+1 class - 1 method - 1 argument - 1 return value.
+
+  syntax: fantom
+  fandoc := MarkdownParser().parse("...markdown...")
+
+It's pretty self explanatory!
+
+
+
+Cheatsheet
+**********
+A cheatsheet of supported markdown syntax:
+
+pre>
+# Heading 1
+
+## Heading 2
+
+### Heading 3
+
+#### Heading 4
+
+#### <a name="id"></a> Heading with anchor tag
+
+This is *italic* and so is _this_
+
+This is **bold** and so is __this__
+
+These are just * stars * and _ stripes _
+
+This is a `code` span
+
+    Void main() {
+        echo("This is a code block")
+    }
+
+This is a link to [Fantom-Factory](http://www.fantomfactory.org/)
+
+![Fanny the Fantom Image](http://www.fantomfactory.org/fanny.png)
+
+> This is a block quote. - said Fanny
+
+ * An unordered list
+ * An unordered list
+ * An unordered list
+
+ 1. An ordered list
+ 1. An ordered list
+ 1. An ordered list
+<pre
+
+
+
+Html
+****
+To convert Markdown to HTML use the [HtmlDocWriter]`fandoc::HtmlDocWriter` class from the core 'fandoc' pod:
+
+pre>
+syntax: fantom
+using afMarkdownParser
+using fandoc
+
+fandoc := MarkdownParser().parse("...markdown...")
+buf    := StrBuf()
+fandoc.writeChildren(HtmlDocWriter(buf.out))
+html   := buf.toStr
+<pre
+
+Note that Fantom also ships with a 'FandocDocWriter' and a 'MarkdownDocWriter' should you wish to print fandoc or markdown documents.
+
