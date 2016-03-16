@@ -55,7 +55,7 @@ internal class MarkdownRules : TreeRules {
 				line, 
 				zeroOrMore( sequence { 
 					between(0..5, space),
-					onlyIfNot(sequence { anyCharOf("*+-".chars), oneOrMore(space)}),
+					onlyIfNot(sequence { firstOf { anyCharOf("*+-".chars), between(1..4, char('#')), }, oneOrMore(space)}),
 					line,					
 				}),
 				pop("li"),

@@ -18,4 +18,23 @@ internal class TestHeadings : MarkdownTest {
  "
 		verifyEq(html.trim, parseToHtml(markdown))
 	}
+
+	Void testHeadingCanEndList() {
+		// 'cos this is what the crappy Fantom MarkdownWriter generates
+		markdown :=
+"* Stuff
+ * Moar Stuff
+ ## <a name='sfx'></a>sfxTitle
+ Stuff
+ "
+		html :=
+"<ul>
+ <li>Stuff</li>
+ <li>Moar Stuff</li>
+ </ul>
+ <h2 id='sfx'>sfxTitle</h2>
+ <p>Stuff</p>
+ "
+		verifyEq(html.trim, parseToHtml(markdown))
+	}
 }
