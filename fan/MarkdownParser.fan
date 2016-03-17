@@ -5,6 +5,7 @@ using fandoc
 ** Parses Markdown strings into fandoc documents.
 @Js
 const class MarkdownParser {
+	private static const Regex hrefRegex	:= """([^"]+[^"\\s]+)(?:\\s+"(?:[^"]+)")?\\s*""".toRegex
 
 	** Parses the given Markdown string into a fandoc document.
 	Doc parse(Str markdown) {
@@ -62,19 +63,26 @@ const class MarkdownParser {
 					case "link":
 						text := item.items.find { it.type == "linkText" }.matched
 						href := item.items.find { it.type == "linkHref" }.matched
-						push(Link(href))
+						push(Link(parseHref(href)))
 						add(DocText(text))
 						pop()
 
 					case "image":
 						alt := item.items.find { it.type == "imageAlt" }.matched
 						src := item.items.find { it.type == "imageSrc" }.matched
-						push(Image(src, alt))
+						push(Image(parseHref(src), alt))
 						pop()
 				}
 			}
 		)
 
 		return elems.first
+	}
+	
+	private Str parseHref(Str href) {
+		matcher := hrefRegex.matcher(href)
+		if (matcher.find.not)
+			throw Err("Could not find href in: $href")
+		return matcher.group(1)
 	}
 }

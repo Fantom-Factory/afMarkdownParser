@@ -16,4 +16,10 @@ internal class TestImages : MarkdownTest {
 		html 	 = "<p>![Fantom-Factory](http://www.fantomfactory.org/)</p>"
 		verifyEq(html.trim, parseToHtml(markdown))
 	}
+
+	Void testImageTitlesAreParsedAndIngored() {
+		markdown := """![alt text](http://i.imgur.com/RSoce9q.jpg "FC-20")"""
+		html 	 := "<img src='http://i.imgur.com/RSoce9q.jpg' alt='alt text'/>"
+		verifyEq(html.trim, parseToHtml(markdown))
+	}
 }
