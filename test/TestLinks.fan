@@ -20,4 +20,10 @@ internal class TestLinks : MarkdownTest {
 		html 	 = "<p>Not a link to [Fantom-Factory](http://www.fantomfactory.org/)!!</p>"
 		verifyEq(html.trim, parseToHtml(markdown))
 	}
+	
+	Void testImageTitlesAreParsedAndIngored() {
+		markdown := """Link to [alt text](http://i.imgur.com/RSoce9q.jpg "FC-20")!!"""
+		html 	 := "<p>Link to <a href='http://i.imgur.com/RSoce9q.jpg'>alt text</a>!!</p>"
+		verifyEq(html.trim, parseToHtml(markdown))
+	}
 }

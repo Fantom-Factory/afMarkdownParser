@@ -31,7 +31,7 @@ internal class MarkdownRules : TreeRules {
 		blankLine		:= sequence { anySpace, eol, }
 
 		rules["statement"]	= firstOf { heading, ul, ol, pre, blockquote, image, paragraph, eol, }
-		rules["heading"]	= sequence { between(1..4, char('#')).withAction(pushHeading.action), onlyIf(anyCharNot('#')), anySpace, line, popHeading, }
+		rules["heading"]	= sequence { between(1..6, char('#')).withAction(pushHeading.action), onlyIf(anyCharNot('#')), anySpace, line, popHeading, }
 		rules["paragraph"]	= sequence { push("paragraph"), oneOrMore(line), blankLine, pop, }
 		rules["blockquote"]	= sequence { pushBlockquote, char('>'), anySpace, line, pop, }
 		rules["pre"]		= sequence { 
@@ -55,7 +55,7 @@ internal class MarkdownRules : TreeRules {
 				line, 
 				zeroOrMore( sequence { 
 					between(0..5, space),
-					onlyIfNot(sequence { firstOf { anyCharOf("*+-".chars), between(1..4, char('#')), }, oneOrMore(space)}),
+					onlyIfNot(sequence { firstOf { anyCharOf("*+-".chars), between(1..6, char('#')), }, oneOrMore(space)}),
 					line,					
 				}),
 				pop("li"),
