@@ -1,7 +1,7 @@
-#Markdown Parser v0.0.2
+#Markdown Parser v0.0.4
 ---
 [![Written in: Fantom](http://img.shields.io/badge/written%20in-Fantom-lightgray.svg)](http://fantom.org/)
-[![pod: v0.0.2](http://img.shields.io/badge/pod-v0.0.2-yellow.svg)](http://www.fantomfactory.org/pods/afMarkdownParser)
+[![pod: v0.0.4](http://img.shields.io/badge/pod-v0.0.4-yellow.svg)](http://www.fantomfactory.org/pods/afMarkdownParser)
 ![Licence: MIT](http://img.shields.io/badge/licence-MIT-blue.svg)
 
 ## Overview
@@ -12,7 +12,7 @@ Parses Markdown text into Fandoc objects.
 
 Supported Markdown syntax:
 
-- Headings
+- Headings (with anchor links)
 - Paragraphs
 - Block quotes
 - Lists (ordered and unordered)
@@ -42,6 +42,8 @@ Full API & fandocs are available on the [Fantom Pod Repository](http://pods.fant
 
 1 class - 1 method - 1 argument - 1 return value.
 
+    fandoc := MarkdownParser().parse("...markdown...")
+
 It's pretty self explanatory!
 
 ## Cheatsheet
@@ -56,6 +58,8 @@ A cheatsheet of supported markdown syntax:
 ### Heading 3
 
 #### Heading 4
+
+#### <a name="id"></a> Heading with anchor tag
 
 This is *italic* and so is _this_
 
@@ -86,14 +90,17 @@ This is a link to [Fantom-Factory](http://www.fantomfactory.org/)
 
 ## Html
 
-To convert Markdown to HTML use the `HtmlDocWriter` class to print fandoc `Doc` objects.
+To convert Markdown to HTML use the [HtmlDocWriter](http://fantom.org/doc/fandoc/HtmlDocWriter.html) class from the core `fandoc` pod:
 
 ```
+using afMarkdownParser
+using fandoc
+
 fandoc := MarkdownParser().parse("...markdown...")
 buf    := StrBuf()
 fandoc.writeChildren(HtmlDocWriter(buf.out))
 html   := buf.toStr
 ```
 
-Note that Fantom also ships with a `FandocDocWriter` and a `MarkdownDocWriter`.
+Note that Fantom also ships with a `FandocDocWriter` and a `MarkdownDocWriter` should you wish to print fandoc or markdown documents.
 
