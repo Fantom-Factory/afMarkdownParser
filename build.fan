@@ -5,14 +5,14 @@ class Build : BuildPod {
 	new make() {
 		podName = "afMarkdownParser"
 		summary = "Parses Markdown text into Fandoc objects"
-		version = Version("0.0.4")
+		version = Version("0.0.5")
 
 		meta = [	
 			"proj.name"		: "Markdown Parser",
 			"afIoc.module"	: "afMarkdownParser::MarkdownModule",
 			"repo.internal"	: "true",
 			"repo.tags"		: "templating, misc",
-			"repo.public"	: "true"
+			"repo.public"	: "false"
 		]
 
 		depends = [
