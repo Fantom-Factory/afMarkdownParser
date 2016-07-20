@@ -3,6 +3,7 @@ Versions
 
 v0.0.6
 ======
+ - New: Github '```' pre blocks '```'.
  - Bug: Pre blocks weren't recognised unless they ended with a '\n' char.
 
 v0.0.4
