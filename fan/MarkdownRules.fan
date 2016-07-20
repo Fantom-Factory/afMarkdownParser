@@ -37,12 +37,12 @@ internal class MarkdownRules : TreeRules {
 		rules["pre"]		= sequence { 
 			push("pre"),
 			oneOf(sequence {
-				sequence { str("    "), oneOrMore(anyCharNot('\n')), char('\n'), }, 
-				oneOrMore( firstOf { 
-					sequence { str("    "), oneOrMore(anyCharNot('\n')), char('\n'), }, 
+				sequence { str("    "), oneOrMore(anyCharNot('\n')), eol, }, 
+				zeroOrMore( firstOf { 
+					sequence { str("    "), oneOrMore(anyCharNot('\n')), eol, }, 
 					sequence { between(0..4, char(' ')), char('\n'), },
 				} ),
-			} ).withAction(addText), 
+			} ).withAction(addPre), 
 			popPre,
 		}
 		
@@ -109,6 +109,25 @@ internal class MarkdownRules : TreeRules {
 
 	|Str matched, Obj? ctx| addText() {
 		|Str matched, TreeCtx ctx| {
+			if (ctx.current.items.last?.type == "text")
+				ctx.current.items.last.matched += matched
+			else
+				ctx.current.add("text", matched)
+		}
+	}
+
+	|Str matched, Obj? ctx| addPre() {
+		|Str matched, TreeCtx ctx| {
+			// remove the default indentation
+			rem := 0
+			if (matched.startsWith("\t"))
+				rem = 1
+			if (matched.startsWith("    "))
+				rem = 4
+			if (rem > 0)
+				matched = matched.splitLines.map { it.size >= rem ? it[rem..-1] : it }.join("\n")
+
+			// same as addText()
 			if (ctx.current.items.last?.type == "text")
 				ctx.current.items.last.matched += matched
 			else

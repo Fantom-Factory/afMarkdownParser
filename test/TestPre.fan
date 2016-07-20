@@ -17,15 +17,26 @@ internal class TestPre : MarkdownTest {
 		html :=
 "<p>This is a para</p>
  
- <pre>    Code block.
-     This is a code block.
+ <pre>Code block.
+ This is a code block.
  
-     This is a still a code block.
+ This is a still a code block.
     
-     A code block still.</pre>
+ A code block still.</pre>
  
  <p>This is a para</p>
  "
+		verifyEq(html.trim, parseToHtml(markdown, false))
+	}
+
+	Void testPreBug() {
+		// pre blocks weren't recognised unless they ended with a '\n' char
+		markdown := "    Code block."
+		html	 :="<pre>Code block.</pre>"
+		verifyEq(html.trim, parseToHtml(markdown, false))
+
+		markdown = "    Code block.\n    Code block still"
+		html	 ="<pre>Code block.\nCode block still</pre>"
 		verifyEq(html.trim, parseToHtml(markdown, false))
 	}
 }

@@ -58,7 +58,7 @@ const class MarkdownParser {
 					case "italic":
 					case "bold":
 					case "code":
-						pop()					
+						pop()
 					
 					case "link":
 						text := item.items.find { it.type == "linkText" }.matched
