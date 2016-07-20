@@ -13,6 +13,7 @@ internal class MarkdownRules : TreeRules {
 		heading			:= rules["heading"]
 		blockquote		:= rules["blockquote"]
 		pre				:= rules["pre"]
+		preGithub		:= rules["preGithub"]
 		ul				:= rules["ul"]
 		ol				:= rules["ol"]
 		image			:= rules["image"]
@@ -30,7 +31,7 @@ internal class MarkdownRules : TreeRules {
 		eol				:= firstOf { char('\n'), eos }
 		blankLine		:= sequence { anySpace, eol, }
 
-		rules["statement"]	= firstOf { heading, ul, ol, pre, blockquote, image, paragraph, eol, }
+		rules["statement"]	= firstOf { heading, ul, ol, pre, preGithub, blockquote, image, paragraph, eol, }
 		rules["heading"]	= sequence { between(1..6, char('#')).withAction(pushHeading.action), onlyIf(anyCharNot('#')), anySpace, line, popHeading, }
 		rules["paragraph"]	= sequence { push("paragraph"), oneOrMore(line), blankLine, pop, }
 		rules["blockquote"]	= sequence { pushBlockquote, char('>'), anySpace, line, pop, }
@@ -44,6 +45,14 @@ internal class MarkdownRules : TreeRules {
 				} ),
 			} ).withAction(addPre), 
 			popPre,
+		}
+
+		rules["preGithub"]	= sequence { 
+			sequence { str("```"), anySpace, char('\n'), },
+			push("pre"),
+			strNot("\n```").withAction(addText),
+			popPre,
+			sequence { str("\n```"), anySpace, eol, },
 		}
 		
 		rules["ul"]			= sequence { 
