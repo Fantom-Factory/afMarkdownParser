@@ -98,7 +98,7 @@ internal class MarkdownRules : TreeRules {
 			pop, 
 		}
 		
-		rules["line"]		= sequence { onlyIfNot(firstOf { blankLine, str("```"), hr, }), text, eol, }
+		rules["line"]		= sequence { onlyIfNot(firstOf { blankLine, str("```"), hr, blockquote, }), text, eol, }
 		rules["text"]		= oneOrMore( firstOf { italic1, italic2, bold1, bold2, codeSpan, link, anyCharNot('\n').withAction(addText), })
 		
 		// suppress multiline bold and italics, 'cos it may in the middle of a list, or gawd knows where!
