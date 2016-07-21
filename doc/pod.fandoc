@@ -90,7 +90,7 @@ syntax: fantom
 using afMarkdownParser
 using fandoc
 
-fandoc := MarkdownParser().parse("...markdown...")
+fandoc := MarkdownParser().parseStr("...markdown...")
 buf    := StrBuf()
 fandoc.writeChildren(HtmlDocWriter(buf.out))
 html   := buf.toStr
