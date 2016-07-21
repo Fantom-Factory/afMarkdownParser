@@ -14,6 +14,7 @@ internal class MarkdownRules : TreeRules {
 		blockquote		:= rules["blockquote"]
 		pre				:= rules["pre"]
 		preGithub		:= rules["preGithub"]
+		hr				:= rules["hr"]
 		ul				:= rules["ul"]
 		ol				:= rules["ol"]
 		image			:= rules["image"]
@@ -30,8 +31,10 @@ internal class MarkdownRules : TreeRules {
 		anySpace		:= zeroOrMore(space)
 		eol				:= firstOf { char('\n'), eos }
 		blankLine		:= sequence { anySpace, eol, }
+		nl				:= char('\n')
+		notNl			:= anyCharNot('\n')
 
-		rules["statement"]	= firstOf { heading, ul, ol, pre, preGithub, blockquote, image, paragraph, blankLine, eol, }
+		rules["statement"]	= firstOf { heading, hr, ul, ol, pre, preGithub, blockquote, image, paragraph, blankLine, eol, }
 		rules["heading"]	= sequence { between(1..6, char('#')).withAction(pushHeading.action), onlyIf(anyCharNot('#')), anySpace, line, popHeading, }
 		rules["paragraph"]	= sequence { push("paragraph"), oneOrMore(line), pop, }
 		rules["blockquote"]	= sequence { pushBlockquote, char('>'), anySpace, line, pop, }
@@ -88,8 +91,14 @@ internal class MarkdownRules : TreeRules {
 			}),
 			pop, 
 		}
+
+		rules["hr"]			= sequence { 
+			push("hr"),
+			sequence { atLeast(3, sequence { anyCharOf("_-*".chars), anySpace, }).withAction(addHr), char('\n'), },
+			pop, 
+		}
 		
-		rules["line"]		= sequence { onlyIfNot(firstOf { blankLine, str("```"), }), text, eol, }
+		rules["line"]		= sequence { onlyIfNot(firstOf { blankLine, str("```"), hr, }), text, eol, }
 		rules["text"]		= oneOrMore( firstOf { italic1, italic2, bold1, bold2, codeSpan, link, anyCharNot('\n').withAction(addText), })
 		
 		// suppress multiline bold and italics, 'cos it may in the middle of a list, or gawd knows where!
@@ -122,6 +131,12 @@ internal class MarkdownRules : TreeRules {
 				ctx.current.items.last.matched += matched
 			else
 				ctx.current.add("text", matched)
+		}
+	}
+
+	virtual |Str matched, Obj? ctx| addHr() {
+		|Str matched, TreeCtx ctx| {
+			ctx.current.add("text", matched)
 		}
 	}
 

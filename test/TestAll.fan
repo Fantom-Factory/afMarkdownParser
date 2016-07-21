@@ -27,7 +27,7 @@ internal class TestAll : MarkdownTest {
 		// text --- hr --- are put on own line
 		
 		markdown = "Example\n-----\nText"
-		html	 ="<p>Example</p>\n<p>----</p><p>Text</p>"
+		html	 ="<p>Example</p>\n\n<p>--hr--</p>\n\n<p>Text</p>"
 		verifyEq(html.trim, parseToHtml(markdown, false))
 		
 	}

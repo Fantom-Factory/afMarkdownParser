@@ -12,8 +12,13 @@ const class MarkdownParser {
 		toFandoc(parseTree(markdown))
 	}
 
+	@NoDoc
+	virtual internal MarkdownRules markdownRules() {
+		MarkdownRules()
+	}
+	
 	internal TreeCtx parseTree(Str markdown) {
-		parser := Parser(MarkdownRules().rootRule)
+		parser := Parser(markdownRules.rootRule)
 		return ((TreeCtx) parser.parseAll(markdown.in, TreeCtx()))
 	}
 	
@@ -43,6 +48,7 @@ const class MarkdownParser {
 					case "italic"		: push(Emphasis())
 					case "bold"			: push(Strong())
 					case "code"			: push(Code())
+					case "hr"			: push(Para())
 					case "text"			: add(DocText(item.matched))
 				}
 			},
@@ -58,6 +64,7 @@ const class MarkdownParser {
 					case "italic":
 					case "bold":
 					case "code":
+					case "hr":
 						pop()
 					
 					case "link":
@@ -72,6 +79,7 @@ const class MarkdownParser {
 						src := item.items.find { it.type == "imageSrc" }.matched
 						push(Image(parseHref(src), alt))
 						pop()
+					
 				}
 			}
 		)
