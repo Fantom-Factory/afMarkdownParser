@@ -15,4 +15,21 @@ internal class TestAll : MarkdownTest {
 //		echo(buf.toStr)
 	}
 	
+	
+	** Mainly for: https://stackhub.org/package/itwToolkitExt
+	Void testCollapses() {
+
+		// text code blocks may immediately follow text
+		markdown := "Example:\n```\nCode\n```"
+		html	 :="<p>Example:</p>\n\n<pre>Code</pre>"
+		verifyEq(html.trim, parseToHtml(markdown, false))
+
+		// text --- hr --- are put on own line
+		
+		markdown = "Example\n-----\nText"
+		html	 ="<p>Example</p>\n<p>----</p><p>Text</p>"
+		verifyEq(html.trim, parseToHtml(markdown, false))
+		
+	}
+	
 }
