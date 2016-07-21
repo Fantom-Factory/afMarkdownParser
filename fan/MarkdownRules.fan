@@ -48,7 +48,7 @@ internal class MarkdownRules : TreeRules {
 		}
 
 		rules["preGithub"]	= sequence { 
-			sequence { str("```"), anySpace, char('\n'), },
+			sequence { str("```"), zeroOrMore(anyCharNot('\n')), char('\n'), },
 			push("pre"),
 			strNot("\n```").withAction(addText),
 			popPre,
