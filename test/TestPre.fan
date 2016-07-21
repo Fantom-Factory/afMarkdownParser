@@ -53,5 +53,10 @@ internal class TestPre : MarkdownTest {
 		markdown = "```ignore\nCode block.\n  More code.\n\n```"
 		html	 ="<pre>Code block.\n  More code.</pre>"
 		verifyEq(html.trim, parseToHtml(markdown, false))
+
+		// empty code block - make sure we don't hang, or do an infinite loop!
+		markdown = "```\n```\n"
+		html	 =""
+		verifyEq(html.trim, parseToHtml(markdown, false))
 	}
 }

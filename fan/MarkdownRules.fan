@@ -41,17 +41,17 @@ internal class MarkdownRules : TreeRules {
 		rules["pre"]		= sequence { 
 			push("pre"),
 			oneOf(sequence {
-				sequence { str("    "), oneOrMore(anyCharNot('\n')), eol, }, 
+				sequence { str("    "), oneOrMore(notNl), eol, }, 
 				zeroOrMore( firstOf { 
-					sequence { str("    "), oneOrMore(anyCharNot('\n')), eol, }, 
-					sequence { between(0..4, char(' ')), char('\n'), },
+					sequence { str("    "), oneOrMore(notNl), eol, }, 
+					sequence { between(0..4, char(' ')), nl, },
 				} ),
 			} ).withAction(addPre), 
 			popPre,
 		}
 
 		rules["preGithub"]	= sequence { 
-			sequence { str("```"), zeroOrMore(anyCharNot('\n')), char('\n'), },
+			sequence { str("```"), zeroOrMore(notNl), nl, },
 			push("pre"),
 			strNot("\n```").withAction(addText),
 			popPre,
@@ -94,7 +94,7 @@ internal class MarkdownRules : TreeRules {
 
 		rules["hr"]			= sequence { 
 			push("hr"),
-			sequence { atLeast(3, sequence { anyCharOf("_-*".chars), anySpace, }).withAction(addHr), char('\n'), },
+			sequence { atLeast(3, sequence { anyCharOf("_-*".chars), anySpace, }).withAction(addHr), nl, },
 			pop, 
 		}
 		
@@ -102,8 +102,8 @@ internal class MarkdownRules : TreeRules {
 		rules["text"]		= oneOrMore( firstOf { italic1, italic2, bold1, bold2, codeSpan, link, anyCharNot('\n').withAction(addText), })
 		
 		// suppress multiline bold and italics, 'cos it may in the middle of a list, or gawd knows where!
-		rules["italic1"]	= sequence { onlyIfNot(str("* ")), push("italic"), char('*'), oneOrMore(sequence { onlyIf(anyCharNot('\n')), anyCharNot('*'), }).withAction(addText), char('*'), pop, }
-		rules["italic2"]	= sequence { onlyIfNot(str("_ ")), push("italic"), char('_'), oneOrMore(sequence { onlyIf(anyCharNot('\n')), anyCharNot('_'), }).withAction(addText), char('_'), pop, }
+		rules["italic1"]	= sequence { onlyIfNot(str("* ")), push("italic"), char('*'), oneOrMore(sequence { onlyIf(notNl), anyCharNot('*'), }).withAction(addText), char('*'), pop, }
+		rules["italic2"]	= sequence { onlyIfNot(str("_ ")), push("italic"), char('_'), oneOrMore(sequence { onlyIf(notNl), anyCharNot('_'), }).withAction(addText), char('_'), pop, }
 		rules["bold1"]		= sequence { push("bold"), str("**"), oneOrMore(anyCharNotOf(['*', '\n'])).withAction(addText), str("**"), pop, }
 		rules["bold2"]		= sequence { push("bold"), str("__"), oneOrMore(anyCharNot('_')).withAction(addText), str("__"), pop, }
 		rules["code"]		= sequence { push("code"), char('`'), oneOrMore(sequence { onlyIf(anyCharNot('\n')), anyCharNot('`'), }).withAction(addText), char('`'), pop, }
