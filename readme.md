@@ -1,7 +1,7 @@
-#Markdown Parser v0.0.4
+#Markdown Parser v0.0.6
 ---
 [![Written in: Fantom](http://img.shields.io/badge/written%20in-Fantom-lightgray.svg)](http://fantom.org/)
-[![pod: v0.0.4](http://img.shields.io/badge/pod-v0.0.4-yellow.svg)](http://www.fantomfactory.org/pods/afMarkdownParser)
+[![pod: v0.0.6](http://img.shields.io/badge/pod-v0.0.6-yellow.svg)](http://www.fantomfactory.org/pods/afMarkdownParser)
 ![Licence: MIT](http://img.shields.io/badge/licence-MIT-blue.svg)
 
 ## Overview
@@ -77,6 +77,9 @@ This is a code block:
 ```
 This is a Github style code block.
 ```
+
+Horizonal Rules:
+----------------
 
 This is a link to [Fantom-Factory](http://www.fantomfactory.org/)
 

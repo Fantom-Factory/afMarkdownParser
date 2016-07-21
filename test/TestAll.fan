@@ -16,20 +16,23 @@ internal class TestAll : MarkdownTest {
 	}
 	
 	
-	** Mainly for: https://stackhub.org/package/itwToolkitExt
+	** Mainly for this to look good: https://stackhub.org/package/itwToolkitExt
 	Void testCollapses() {
 
-		// text code blocks may immediately follow text
+		// test code blocks may immediately follow text
 		markdown := "Example:\n```\nCode\n```"
 		html	 :="<p>Example:</p>\n\n<pre>Code</pre>"
 		verifyEq(html.trim, parseToHtml(markdown, false))
 
-		// text --- hr --- are put on own line
-		
+		// test --- hr --- are put on own line
 		markdown = "Example\n-----\nText"
 		html	 ="<p>Example</p>\n\n<p>--hr--</p>\n\n<p>Text</p>"
 		verifyEq(html.trim, parseToHtml(markdown, false))
 		
+		// test block quotes may immediately follow text 
+		markdown = "Example\n> Quote"
+		html	 ="<p>Example</p>\n\n<blockquote>Quote</blockquote>"
+		verifyEq(html.trim, parseToHtml(markdown, false))
 	}
 	
 }
