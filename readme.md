@@ -18,7 +18,7 @@ Supported Markdown syntax:
 - Lists (ordered and unordered)
 - Links and images
 - Bold and italics
-- Code blocks and code spans
+- Code blocks and code spans (normal and Github style)
 
 Markdown Parser uses the extensible Parsing Expression Grammer as provider by [Pegger](http://pods.fantomfactory.org/pods/afPegger).
 
@@ -67,11 +67,16 @@ This is **bold** and so is __this__
 
 These are just * stars * and _ stripes _
 
-This is a `code` span
+This is a `code` span.
 
+This is a code block:
     Void main() {
-        echo("This is a code block")
+        echo("Note the leading 4 spaces")
     }
+
+```
+This is a Github style code block.
+```
 
 This is a link to [Fantom-Factory](http://www.fantomfactory.org/)
 

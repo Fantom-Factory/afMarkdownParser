@@ -35,18 +35,22 @@ internal class TestPre : MarkdownTest {
 		html	 :="<pre>Code block.</pre>"
 		verifyEq(html.trim, parseToHtml(markdown, false))
 
-		markdown = "    Code block.\n    Code block still"
+		markdown = "    Code block.\n    Code block still\n"
 		html	 ="<pre>Code block.\nCode block still</pre>"
 		verifyEq(html.trim, parseToHtml(markdown, false))
 	}
 
 	Void testPreGithub() {
-		// pre blocks weren't recognised unless they ended with a '\n' char
 		markdown := "```\nCode block.\n```\n"
 		html	 :="<pre>Code block.</pre>"
 		verifyEq(html.trim, parseToHtml(markdown, false))
 
 		markdown = "```  \nCode block.\n  More code.\n\n```"
+		html	 ="<pre>Code block.\n  More code.</pre>"
+		verifyEq(html.trim, parseToHtml(markdown, false))
+
+		// syntax highlighting is straight after the backticks - ignore it!
+		markdown = "```ignore\nCode block.\n  More code.\n\n```"
 		html	 ="<pre>Code block.\n  More code.</pre>"
 		verifyEq(html.trim, parseToHtml(markdown, false))
 	}
