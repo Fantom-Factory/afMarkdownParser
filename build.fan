@@ -5,7 +5,7 @@ class Build : BuildPod {
 	new make() {
 		podName = "afMarkdownParser"
 		summary = "Parses Markdown text into Fandoc objects"
-		version = Version("0.0.8")
+		version = Version("0.0.9")
 
 		meta = [	
 			"pod.dis"		: "Markdown Parser",
