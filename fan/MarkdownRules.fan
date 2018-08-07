@@ -161,7 +161,9 @@ internal class MarkdownRules : TreeRules {
 
 	Rule pushHeading() {
 		doAction |Str matched, TreeCtx ctx| { 
-			ctx.push("heading", matched, Obj[matched.size]) 
+			// limit heading size to 4, because that's all that Fandoc can handle (esp when printing to Fandoc source)
+			// besides, who actually has a legitimate use for <h5> and <h6>!?
+			ctx.push("heading", matched, Obj[matched.size.min(4)]) 
 		}
 	}
 

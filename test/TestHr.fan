@@ -1,4 +1,3 @@
-using fandoc
 
 internal class TestHr : MarkdownTest {
 	

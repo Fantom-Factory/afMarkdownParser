@@ -1,4 +1,3 @@
-using fandoc
 
 internal class TestAll : MarkdownTest {
 	
@@ -34,5 +33,4 @@ internal class TestAll : MarkdownTest {
 		html	 ="<p>Example</p>\n\n<blockquote>Quote</blockquote>"
 		verifyEq(html.trim, parseToHtml(markdown, false))
 	}
-	
 }

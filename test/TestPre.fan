@@ -56,7 +56,7 @@ internal class TestPre : MarkdownTest {
 
 		// empty code block - make sure we don't hang, or do an infinite loop!
 		markdown = "```\n```\n"
-		html	 =""
+		html	 = ""
 		verifyEq(html.trim, parseToHtml(markdown, false))
 	}
 }
