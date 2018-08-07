@@ -22,4 +22,10 @@ internal class TestImages : MarkdownTest {
 		html 	 := "<img src='http://i.imgur.com/RSoce9q.jpg' alt='alt text'/>"
 		verifyEq(html.trim, parseToHtml(markdown))
 	}
+
+	Void testImageAndText() {
+		markdown := "![Fan](http://www.fantomfactory.org/)\n\nSausages"
+		html 	 := "<img src='http://www.fantomfactory.org/' alt='Fan'/>\n<p>Sausages</p>"
+		verifyEq(html.trim, parseToHtml(markdown))
+	}
 }

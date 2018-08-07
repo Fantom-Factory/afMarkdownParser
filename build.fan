@@ -7,12 +7,12 @@ class Build : BuildPod {
 		summary = "Parses Markdown text into Fandoc objects"
 		version = Version("0.0.9")
 
-		meta = [	
+		meta = [
 			"pod.dis"		: "Markdown Parser",
 			"afIoc.module"	: "afMarkdownParser::MarkdownModule",
 			"repo.internal"	: "true",
 			"repo.tags"		: "templating, misc",
-			"repo.public"	: "false"
+			"repo.public"	: "true"
 		]
 
 		depends = [
