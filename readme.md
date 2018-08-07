@@ -1,8 +1,9 @@
-#Markdown Parser v0.0.6
+# Markdown Parser v0.0.8
 ---
-[![Written in: Fantom](http://img.shields.io/badge/written%20in-Fantom-lightgray.svg)](http://fantom.org/)
-[![pod: v0.0.6](http://img.shields.io/badge/pod-v0.0.6-yellow.svg)](http://www.fantomfactory.org/pods/afMarkdownParser)
-![Licence: MIT](http://img.shields.io/badge/licence-MIT-blue.svg)
+
+[![Written in: Fantom](http://img.shields.io/badge/written%20in-Fantom-lightgray.svg)](http://fantom-lang.org/)
+[![pod: v0.0.8](http://img.shields.io/badge/pod-v0.0.8-yellow.svg)](http://eggbox.fantomfactory.org/pods/afMarkdownParser)
+[![Licence: ISC](http://img.shields.io/badge/licence-ISC-blue.svg)](https://choosealicense.com/licenses/isc/)
 
 ## Overview
 
@@ -20,23 +21,27 @@ Supported Markdown syntax:
 - Bold and italics
 - Code blocks and code spans (normal and Github style)
 
-Markdown Parser uses the extensible Parsing Expression Grammer as provider by [Pegger](http://pods.fantomfactory.org/pods/afPegger).
+Markdown Parser uses the extensible Parsing Expression Grammer as provider by [Pegger](http://eggbox.fantomfactory.org/pods/afPegger).
 
 Note that this markdown implementation is known to be incomplete. For example, it does not support reference links or backslash escaping `*` and `_` characters. But it should be usable to most casual users.
 
 ## Install
 
-Install `Markdown Parser` with the Fantom Repository Manager ( [fanr](http://fantom.org/doc/docFanr/Tool.html#install) ):
+Install `Markdown Parser` with the Fantom Pod Manager ( [FPM](http://eggbox.fantomfactory.org/pods/afFpm) ):
 
-    C:\> fanr install -r http://pods.fantomfactory.org/fanr/ afMarkdownParser
+    C:\> fpm install afMarkdownParser
 
-To use in a [Fantom](http://fantom.org/) project, add a dependency to `build.fan`:
+Or install `Markdown Parser` with [fanr](http://fantom.org/doc/docFanr/Tool.html#install):
+
+    C:\> fanr install -r http://eggbox.fantomfactory.org/fanr/ afMarkdownParser
+
+To use in a [Fantom](http://fantom-lang.org/) project, add a dependency to `build.fan`:
 
     depends = ["sys 1.0", ..., "afMarkdownParser 0.0"]
 
 ## Documentation
 
-Full API & fandocs are available on the [Fantom Pod Repository](http://pods.fantomfactory.org/pods/afMarkdownParser/).
+Full API & fandocs are available on the [Eggbox](http://eggbox.fantomfactory.org/pods/afMarkdownParser/) - the Fantom Pod Repository.
 
 ## Usage
 
@@ -104,7 +109,7 @@ To convert Markdown to HTML use the [HtmlDocWriter](http://fantom.org/doc/fandoc
 using afMarkdownParser
 using fandoc
 
-fandoc := MarkdownParser().parse("...markdown...")
+fandoc := MarkdownParser().parseStr("...markdown...")
 buf    := StrBuf()
 fandoc.writeChildren(HtmlDocWriter(buf.out))
 html   := buf.toStr

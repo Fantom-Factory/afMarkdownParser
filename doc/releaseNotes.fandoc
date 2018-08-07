@@ -1,5 +1,6 @@
-Versions
-********
+v0.0.8
+======
+ - Chg: Limit parsed headings to 'h4' as fandoc can't handle 'h5' and 'h6'.
 
 v0.0.6
 ======
