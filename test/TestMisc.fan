@@ -2,7 +2,7 @@
 internal class TestMisc : MarkdownTest {
 	
 	Void testSpacesInEmptyLines() {
-		Log.get("afPegger").level = LogLevel.debug
+//		Log.get("afPegger").level = LogLevel.debug
 		markdown :=
 "## h2
  Blah

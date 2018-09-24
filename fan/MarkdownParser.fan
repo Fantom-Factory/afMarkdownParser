@@ -49,7 +49,11 @@ const class MarkdownParser {
 					case "bold"			: push(Strong())
 					case "code"			: push(Code())
 					case "hr"			: push(Hr())
-					case "text"			: add(DocText(item.matched))
+					case "text"			:
+						// ensure multiple text nodes are joined with a space - DocElem doesn't do this for us
+						if (elems.last.children.last?.id == DocNodeId.text)
+							add(DocText(" "))
+						add(DocText(item.matched))
 				}
 			},
 			|TreeItem item| {

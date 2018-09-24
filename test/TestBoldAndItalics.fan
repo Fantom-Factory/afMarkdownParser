@@ -20,11 +20,11 @@ internal class TestBoldAndItalics : MarkdownTest {
 		// there's a case that bold / italics should be allowed to span lines but not paragraphs,
 		// but then what of lists, headings, and block quotes, each with different section endings.
 		// It then gets too tricky. Easier to just ban them!
-		markdown := "Look, I'm *not \nitalic*!!"
+		markdown := "Look, I'm *not\nitalic*!!"
 		html 	 := "<p>Look, I'm *not italic*!!</p>"
 		verifyEq(html.trim, parseToHtml(markdown))
 
-		markdown = "Look, I'm _not \nitalic_!!"
+		markdown = "Look, I'm _not\nitalic_!!"
 		html 	 = "<p>Look, I'm _not italic_!!</p>"
 		verifyEq(html.trim, parseToHtml(markdown))
 	}

@@ -20,8 +20,8 @@ internal class TestOrderedLists : MarkdownTest {
 
 	Void testHangingIndents() {
 		markdown :=
-"  1. Red, 
-     Green, 
+"  1. Red,
+     Green,
      Blue
  "
 
@@ -35,8 +35,8 @@ internal class TestOrderedLists : MarkdownTest {
 
 	Void testLazyIndents() {
 		markdown :=
-"  1. Red, 
- Green, 
+"  1. Red,
+ Green,
  Blue
  "
 

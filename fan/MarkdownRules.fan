@@ -26,6 +26,7 @@ internal class MarkdownRules : TreeRules {
 		codeSpan		:= rules["code"]
 		link			:= rules["link"]
 		text			:= rules["text"]
+		plainChar		:= rules["plainChar"]
 
 		space			:= anyCharOf([' ', '\t'])
 		anySpace		:= zeroOrMore(space)
@@ -98,8 +99,9 @@ internal class MarkdownRules : TreeRules {
 			pop, 
 		}
 		
-		rules["line"]		= sequence { onlyIfNot(firstOf { blankLine, str("```"), hr, blockquote, }), text, eol, }
-		rules["text"]		= oneOrMore( firstOf { italic1, italic2, bold1, bold2, codeSpan, link, anyCharNot('\n').withAction(addText), })
+		rules["line"]		= sequence { onlyIfNot(firstOf { blankLine, str("```"), hr, blockquote, }), text, eol.withAction(newText), }
+		rules["text"]		= oneOrMore( firstOf { italic1, italic2, bold1, bold2, codeSpan, link, anyCharNot('\n').withAction(addChar), })
+		//rules["plainChar"]	= onlyIf( sequence { char('\n'), anyAlphaChar, })
 		
 		// suppress multiline bold and italics, 'cos it may in the middle of a list, or gawd knows where!
 		rules["italic1"]	= sequence { onlyIfNot(str("* ")), push("italic"), char('*'), oneOrMore(sequence { onlyIf(notNl), anyCharNot('*'), }).withAction(addText), char('*'), pop, }
@@ -125,12 +127,25 @@ internal class MarkdownRules : TreeRules {
 		return statement
 	}
 
+	// FIXME - convert to fields
+	|Str matched, Obj? ctx| addChar() {
+		addText()
+	}
+
+	Bool makeNewText
+	|Str matched, Obj? ctx| newText() {
+		|Str matched, TreeCtx ctx| {
+			makeNewText = true
+		}
+	}
+
 	|Str matched, Obj? ctx| addText() {
 		|Str matched, TreeCtx ctx| {
-			if (ctx.current.items.last?.type == "text")
+			if (ctx.current.items.last?.type == "text" && !makeNewText)
 				ctx.current.items.last.matched += matched
 			else
 				ctx.current.add("text", matched)
+			makeNewText = false
 		}
 	}
 

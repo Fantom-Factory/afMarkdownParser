@@ -13,11 +13,11 @@ internal class TestLinks : MarkdownTest {
 
 	Void testLinksDoNotSpanLines() {
 		markdown := "Not a link to [Fantom-\nFactory](http://www.fantomfactory.org/)!!"
-		html 	 := "<p>Not a link to [Fantom-Factory](http://www.fantomfactory.org/)!!</p>"
+		html 	 := "<p>Not a link to [Fantom- Factory](http://www.fantomfactory.org/)!!</p>"
 		verifyEq(html.trim, parseToHtml(markdown))
 
 		markdown = "Not a link to [Fantom-Factory](http://www.fantom\nfactory.org/)!!"
-		html 	 = "<p>Not a link to [Fantom-Factory](http://www.fantomfactory.org/)!!</p>"
+		html 	 = "<p>Not a link to [Fantom-Factory](http://www.fantom factory.org/)!!</p>"
 		verifyEq(html.trim, parseToHtml(markdown))
 	}
 	

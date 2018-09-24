@@ -10,12 +10,12 @@ internal class TestBlockQuotes : MarkdownTest {
  > Pardon my dutch
  para 2
 
- >   Pardon my german 
+ >   Pardon my german
  >Pardon my spanish
  "
 		html :=
 "<p>para 1</p>
- <blockquote>Pardon my frenchPardon my dutch</blockquote>
+ <blockquote>Pardon my french Pardon my dutch</blockquote>
  <p>para 2</p>
  <blockquote>Pardon my german Pardon my spanish</blockquote>
  "

@@ -9,11 +9,11 @@ internal class TestImages : MarkdownTest {
 
 	Void testImagesDoNotSpanLines() {
 		markdown := "![Fantom-\nFactory](http://www.fantomfactory.org/)"
-		html 	 := "<p>![Fantom-Factory](http://www.fantomfactory.org/)</p>"
+		html 	 := "<p>![Fantom- Factory](http://www.fantomfactory.org/)</p>"
 		verifyEq(html.trim, parseToHtml(markdown))
 
 		markdown = "![Fantom-Factory](http://www.fantom\nfactory.org/)"
-		html 	 = "<p>![Fantom-Factory](http://www.fantomfactory.org/)</p>"
+		html 	 = "<p>![Fantom-Factory](http://www.fantom factory.org/)</p>"
 		verifyEq(html.trim, parseToHtml(markdown))
 	}
 

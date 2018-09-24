@@ -1,5 +1,5 @@
 using afPegger
-using fandoc
+using fandoc::HtmlDocWriter
 
 internal class MarkdownTest : Test {
 	

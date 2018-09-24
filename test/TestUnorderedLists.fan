@@ -20,8 +20,8 @@ internal class TestUnorderedLists : MarkdownTest {
 
 	Void testHangingIndents() {
 		markdown :=
-"  * Red, 
-     Green, 
+"  * Red,
+     Green,
      Blue
  "
 
@@ -36,8 +36,8 @@ internal class TestUnorderedLists : MarkdownTest {
 	Void testLazyIndents() {
 //		Log.get("afPegger").level = LogLevel.debug
 		markdown :=
-"  * Red, 
- Green, 
+"  * Red,
+ Green,
  Blue
  "
 
