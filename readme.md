@@ -1,8 +1,8 @@
-# Markdown Parser v0.0.8
+# Markdown Parser v0.0.10
 ---
 
 [![Written in: Fantom](http://img.shields.io/badge/written%20in-Fantom-lightgray.svg)](http://fantom-lang.org/)
-[![pod: v0.0.8](http://img.shields.io/badge/pod-v0.0.8-yellow.svg)](http://eggbox.fantomfactory.org/pods/afMarkdownParser)
+[![pod: v0.0.10](http://img.shields.io/badge/pod-v0.0.10-yellow.svg)](http://eggbox.fantomfactory.org/pods/afMarkdownParser)
 [![Licence: ISC](http://img.shields.io/badge/licence-ISC-blue.svg)](https://choosealicense.com/licenses/isc/)
 
 ## Overview

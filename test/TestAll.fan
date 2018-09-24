@@ -24,24 +24,24 @@ internal class TestAll : MarkdownTest {
 		verifyEq(fandoc.children.first->children->first.toStr, "Lines separated with a single newline end up separated with a space")
 	}
 	
-//	Void testParser() {
-////		Log.get("afPegger").level = LogLevel.debug
-//		
-//		//mdown	:= `test/communityResources.md`.toFile.readAllStr
-//		mdown	:= `test/nhaystack.md`.toFile.readAllStr
-//		doc		:= MarkdownParser().parse(mdown)
-//
-//		buf		:= StrBuf()
-//		doc.writeChildren(FandocDocWriter(buf.out))
-//		
-//		`test/nhaystack.fandoc`.toFile.out.writeChars(buf.toStr).close
-//		
-//		buf.clear
-//		fandoc	:= FandocParser().parseStr(buf.toStr)
-//		fandoc.writeChildren(FandocDocWriter(buf.out))
-//
-//		echo(buf.toStr)
-//	}
+	Void testParser() {
+//		Log.get("afPegger").level = LogLevel.debug
+		
+		//mdown	:= `test/communityResources.md`.toFile.readAllStr
+		mdown	:= `test/nhaystack.md`.toFile.readAllStr
+		doc		:= MarkdownParser().parse(mdown)
+
+		buf		:= StrBuf()
+		doc.writeChildren(FandocDocWriter(buf.out))
+		
+		`test/nhaystack.fandoc`.toFile.out.writeChars(buf.toStr).close
+		
+		buf.clear
+		fandoc	:= FandocParser().parseStr(buf.toStr)
+		fandoc.writeChildren(FandocDocWriter(buf.out))
+
+		echo(buf.toStr)
+	}
 	
 	** Mainly for this to look good: https://stackhub.org/package/itwToolkitExt
 	Void testCollapses() {

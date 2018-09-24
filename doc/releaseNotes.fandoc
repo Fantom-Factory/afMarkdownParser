@@ -1,7 +1,7 @@
 v0.0.10
 =======
  - New: Supports '<hr>' elements.
- - Chg: Correctly parses consecutive lines of text as multiple text nodes with spaces inbetween.
+ - Chg: Correctly parses consecutive lines of text as multiple text nodes with spaces in between.
 
 v0.0.8
 ======

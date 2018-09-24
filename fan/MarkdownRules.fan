@@ -127,7 +127,6 @@ internal class MarkdownRules : TreeRules {
 		return statement
 	}
 
-	// FIXME - convert to fields
 	|Str matched, Obj? ctx| addChar() {
 		addText()
 	}
