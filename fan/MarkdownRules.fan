@@ -94,7 +94,7 @@ internal class MarkdownRules : TreeRules {
 
 		rules["hr"]			= sequence { 
 			push("hr"),
-			sequence { atLeast(3, sequence { anyCharOf("_-*".chars), anySpace, }).withAction(addHr), nl, },
+			sequence { atLeast(3, sequence { anyCharOf("_-*".chars), anySpace, }), nl, },
 			pop, 
 		}
 		
@@ -131,12 +131,6 @@ internal class MarkdownRules : TreeRules {
 				ctx.current.items.last.matched += matched
 			else
 				ctx.current.add("text", matched)
-		}
-	}
-
-	virtual |Str matched, Obj? ctx| addHr() {
-		|Str matched, TreeCtx ctx| {
-			ctx.current.add("text", matched)
 		}
 	}
 

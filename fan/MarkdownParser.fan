@@ -48,7 +48,7 @@ const class MarkdownParser {
 					case "italic"		: push(Emphasis())
 					case "bold"			: push(Strong())
 					case "code"			: push(Code())
-					case "hr"			: push(Para())	// fandoc has no <hr> element
+					case "hr"			: push(Hr())
 					case "text"			: add(DocText(item.matched))
 				}
 			},
