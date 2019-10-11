@@ -7,7 +7,10 @@ class Main : AbstractMain
   @Arg { help = "Source Markdown (.md) or Fandoc (.fandoc) file to convert." }
   File? srcFile
   
-  @Opt { aliases=["l"]; help = "Sets the logging level to any of [silent, err, warn, info, debug]." }
+  @Opt { aliases=[ "o" ]; help = "Overwrite target file if exists. By default aborts the process if the target file exists." }
+  Bool overwrite := false
+  
+  @Opt { aliases=[ "l" ]; help = "Sets the logging level to any of [silent, err, warn, info, debug]." }
   LogLevel logLevel := LogLevel.info
   
   
@@ -46,16 +49,17 @@ class Main : AbstractMain
   Buf getOutputBuffer( Str ext )
   {
     outputFile = File( Uri( srcFile.basename + ".${ext}" ) )
-    log.info( "Creating output file ${outputFile}" )
+    if( outputFile.exists && !overwrite ) { throw Err( "Process aborted because the target file exists `${outputFile}`. Use option -o to overwrite." ) }
+    log.info( "Creating output file `${outputFile}`" )
     return outputFile.open( "rw" )
   }
   
   
   Int parseMarkdown()
   {
+    buf := getOutputBuffer( "fandoc" )
     markdownDoc := MarkdownParser().parse( readInput )
     log.info( "Markdown file parsed" )
-    buf := getOutputBuffer( "fandoc" )
     markdownDoc.write( FandocDocWriter( buf.out ) )
     log.debug( buf.toStr )
     log.info( "Done" )
