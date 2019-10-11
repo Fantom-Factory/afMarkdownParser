@@ -7,6 +7,9 @@ class Main : AbstractMain
   @Arg { help = "Source Markdown (.md) or Fandoc (.fandoc) file to convert." }
   File? srcFile
   
+  @Arg { help = "Name of the destination file. Defaults to source filename with the opposite extension." }
+  Str[]? targetFile
+  
   @Opt { aliases=[ "o" ]; help = "Overwrite target file if exists. By default aborts the process if the target file exists." }
   Bool overwrite := false
   
@@ -48,7 +51,8 @@ class Main : AbstractMain
   
   Buf getOutputBuffer( Str ext )
   {
-    outputFile = File( Uri( srcFile.basename + ".${ext}" ) )
+    targetFilename := targetFile != null ? targetFile[ 0 ] : srcFile.basename + ".${ext}"
+    outputFile = File( Uri( targetFilename ) )
     if( outputFile.exists && !overwrite ) { throw Err( "Process aborted because the target file exists `${outputFile}`. Use option -o to overwrite." ) }
     log.info( "Creating output file `${outputFile}`" )
     return outputFile.open( "rw" )
