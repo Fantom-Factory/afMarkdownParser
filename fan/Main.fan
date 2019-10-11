@@ -73,8 +73,13 @@ class Main : AbstractMain
   
   Int parseFandoc()
   {
-    readInput
-    return 0
+    buf := getOutputBuffer( "md" )
+    fandocDoc := FandocParser().parse( srcFile.name, srcFile.in )
+    log.info( "Fandoc file parsed" )
+    fandocDoc.write( MarkdownDocWriter( buf.out ) )
+    log.debug( buf.toStr )
+    log.info( "Done" )
+    return buf.close ? 0 : -1
   }
   
 }
