@@ -51,8 +51,10 @@ class Main : AbstractMain
   
   Buf getOutputBuffer( Str ext )
   {
-    targetFilename := targetFile != null ? targetFile[ 0 ] : srcFile.basename + ".${ext}"
-    outputFile = File( Uri( targetFilename ) )
+    uri := targetFile != null 
+      ? Uri( targetFile[ 0 ] ) 
+      : srcFile.uri.plusName( srcFile.basename + ".${ext}" )
+    outputFile = File( uri )
     if( outputFile.exists && !overwrite ) { throw Err( "Process aborted because the target file exists `${outputFile}`. Use option -o to overwrite." ) }
     log.info( "Creating output file `${outputFile}`" )
     return outputFile.open( "rw" )
