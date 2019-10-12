@@ -69,7 +69,7 @@ class Main : AbstractMain
     markdownDoc.write( FandocDocWriter( buf.out ) )
     log.debug( buf.toStr )
     log.info( "Done" )
-    return buf.close ? 0 : -1
+    return buf.close ? 0 : 1
   }
   
   
@@ -81,7 +81,7 @@ class Main : AbstractMain
     fandocDoc.write( MarkdownDocWriter( buf.out ) )
     log.debug( buf.toStr )
     log.info( "Done" )
-    return buf.close ? 0 : -1
+    return buf.close ? 0 : 1
   }
   
 }
