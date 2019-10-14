@@ -42,7 +42,7 @@ class Main : AbstractMain
   
   Str readInput()
   {
-    log.info( "Reading source file ${srcFile}" )
+    log.info( "Reading source file `${srcFile}`" )
     content := srcFile.readAllStr
     log.debug( content )
     return content
@@ -63,9 +63,9 @@ class Main : AbstractMain
   
   Int parseMarkdown()
   {
-    buf := getOutputBuffer( "fandoc" )
     markdownDoc := MarkdownParser().parse( readInput )
     log.info( "Markdown file parsed" )
+    buf := getOutputBuffer( "fandoc" )
     markdownDoc.write( FandocDocWriter( buf.out ) )
     log.debug( buf.toStr )
     log.info( "Done" )
@@ -75,9 +75,10 @@ class Main : AbstractMain
   
   Int parseFandoc()
   {
-    buf := getOutputBuffer( "md" )
+    log.info( "Reading source file `${srcFile}`" )
     fandocDoc := FandocParser().parse( srcFile.name, srcFile.in )
     log.info( "Fandoc file parsed" )
+    buf := getOutputBuffer( "md" )
     fandocDoc.write( MarkdownDocWriter( buf.out ) )
     log.debug( buf.toStr )
     log.info( "Done" )
