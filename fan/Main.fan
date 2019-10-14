@@ -67,6 +67,7 @@ class Main : AbstractMain
     log.info( "Markdown file parsed" )
     buf := getOutputBuffer( "fandoc" )
     markdownDoc.write( FandocDocWriter( buf.out ) )
+    buf.sync
     log.debug( buf.toStr )
     log.info( "Done" )
     return buf.close ? 0 : 1
@@ -80,6 +81,7 @@ class Main : AbstractMain
     log.info( "Fandoc file parsed" )
     buf := getOutputBuffer( "md" )
     fandocDoc.write( MarkdownDocWriter( buf.out ) )
+    buf.sync
     log.debug( buf.toStr )
     log.info( "Done" )
     return buf.close ? 0 : 1
