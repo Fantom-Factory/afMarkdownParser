@@ -43,7 +43,7 @@ class Main : AbstractMain
   Str readInput()
   {
     log.info( "Reading source file ${srcFile}" )
-    content := srcFile.readAllBuf.in.readAllStr
+    content := srcFile.readAllStr
     log.debug( content )
     return content
   }
