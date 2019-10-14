@@ -17,26 +17,22 @@ class Main : AbstractMain
   LogLevel logLevel := LogLevel.info
   
   
-  File? outputFile
-  
-  
   override Int run()
   {
     log.level = logLevel
     log.info( "Log level: ${log.level}" )
     
     ext := srcFile.ext
-    if( ext == null ) { throw Err( "Source file must have either .md (Markdown) or .fandoc (Fandoc) extension." ) }
-    
-    exitCode := 0
-   
+    if( ext == null ) {
+      throw Err( "Source file must have either .md (Markdown) or .fandoc (Fandoc) extension." )
+    }
     switch( ext.lower )
     {
-      case "md": exitCode = parseMarkdown
-      case "fandoc": exitCode = parseFandoc
+      case "md": parseMarkdown
+      case "fandoc": parseFandoc
       default: throw Err( "Unsupported file extension: .${ext}; only .md and .fandoc files are supported." )
     }
-    return exitCode
+    return 0
   }
   
   
@@ -49,42 +45,47 @@ class Main : AbstractMain
   }
   
   
-  Buf getOutputBuffer( Str ext )
+  OutStream openOutputStream( Str ext )
   {
     uri := targetFile != null 
       ? Uri( targetFile[ 0 ] ) 
       : srcFile.uri.plusName( srcFile.basename + ".${ext}" )
-    outputFile = File( uri )
-    if( outputFile.exists && !overwrite ) { throw Err( "Process aborted because the target file exists `${outputFile}`. Use option -o to overwrite." ) }
+    outputFile := File( uri )
+    if( outputFile.exists && !overwrite ) {
+      throw Err( "Process aborted because the target file exists `${outputFile}`. Use option -o to overwrite." )
+    }
     log.info( "Creating output file `${outputFile}`" )
-    return outputFile.open( "rw" )
+    return outputFile.out
   }
   
   
-  Int parseMarkdown()
+  Void parseMarkdown()
   {
     markdownDoc := MarkdownParser().parse( readInput )
     log.info( "Markdown file parsed" )
-    buf := getOutputBuffer( "fandoc" )
-    markdownDoc.write( FandocDocWriter( buf.out ) )
-    buf.sync
-    log.debug( buf.toStr )
-    log.info( "Done" )
-    return buf.close ? 0 : 1
+    outStream := openOutputStream( "fandoc" )
+    markdownDoc.write( FandocDocWriter( outStream ) )
+    closeOutput( outStream )
   }
   
   
-  Int parseFandoc()
+  Void parseFandoc()
   {
     log.info( "Reading source file `${srcFile}`" )
     fandocDoc := FandocParser().parse( srcFile.name, srcFile.in )
     log.info( "Fandoc file parsed" )
-    buf := getOutputBuffer( "md" )
-    fandocDoc.write( MarkdownDocWriter( buf.out ) )
-    buf.sync
-    log.debug( buf.toStr )
+    outStream := openOutputStream( "md" )
+    fandocDoc.write( MarkdownDocWriter( outStream ) )
+    closeOutput( outStream )
+  }
+  
+  
+  Void closeOutput( OutStream outStream )
+  {
+    outStream.flush
+    log.debug( outStream.toStr )
+    outStream.close
     log.info( "Done" )
-    return buf.close ? 0 : 1
   }
   
 }
