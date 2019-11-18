@@ -27,6 +27,11 @@ Usage
 
 It's pretty self explanatory!
 
+Or, for those wanting a quick fix, there's a cmd-line option that converts '.fandoc' files to '.md' files and vice-versa. The extension is auto-checked to choose an appropiate converter.
+
+  $ fan afMarkdownParser somefile.fandoc
+
+*(Thanks go to 'LightDye' for implementing the cmd-line feature.)*
 
 
 Cheatsheet
@@ -81,7 +86,7 @@ This is a link to [Fantom-Factory](http://www.fantomfactory.org/)
 
 
 
-Html
+HTML
 ****
 To convert Markdown to HTML use the [HtmlDocWriter]`fandoc::HtmlDocWriter` class from the core 'fandoc' pod:
 
