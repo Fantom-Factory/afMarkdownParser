@@ -1,4 +1,3 @@
-    fandocDoc.write( MarkdownDocWriter( buf.out ) )
 using util
 using fandoc
 

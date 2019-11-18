@@ -1,3 +1,7 @@
+v0.0.12
+=======
+ - New: Main method converts fandoc files to markdown and vice-versa. Thanks go to 'LightDye' for the contribution.
+
 v0.0.10
 =======
  - New: Supports '<hr>' elements.

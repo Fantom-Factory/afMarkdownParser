@@ -5,7 +5,7 @@ class Build : BuildPod {
 	new make() {
 		podName = "afMarkdownParser"
 		summary = "Parses Markdown text into Fandoc objects"
-		version = Version("0.0.11")
+		version = Version("0.0.13")
 
 		meta = [
 			"pod.dis"		: "Markdown Parser",
@@ -22,7 +22,7 @@ class Build : BuildPod {
 			"afPegger 0.1.0  - 0.2"
 		]
 
-		srcDirs = [`test/`, `fan/`]
+		srcDirs = [`fan/`, `test/`]
 		resDirs = [`doc/`]
 	}
 }
