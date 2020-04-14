@@ -1,7 +1,7 @@
 
 // PEG Rules for parsing Markdown text
 
-markdown	= statement
+markdown	= statement*
 
 statement	= heading / hr / ul / ol / pre / preGithub / blockquote / image / paragraph / blankLine / eol
 heading		= "#"{1,6} !"#" anySpace line
@@ -10,12 +10,12 @@ blockquote	= ">" anySpace line
 
 pre			= "    " notNl+ eol (("    " notNl+ eol) / (" "{0,4} nl))*
 preGithub	= "```" notNl* nl (!"\n```" .)+ "\n```" anySpace eol
-ul			= (space{0,3} [*+-]      space+ line (space{0,5} !(([*+-] / "#"{1,6}) space+) line)* )+
-ol			= (space{0,3} [0-9]+ "." space+ line (space{0,5} !( [0-9]+ "."        space+) line)* )+
+ul			= (space{0,3} [*+\-]     space+ line (space{0,5} !(([*+\-] / "#"{1,6}) space+) line)* )+
+ol			= (space{0,3} [0-9]+ "." space+ line (space{0,5} !( [0-9]+ "."         space+) line)* )+
 hr			= ([_-*] anySpace){3,} nl
 
 line		= !(blankLine / "```" / hr / blockquote) text eol
-text		= (italic1 / italic2 / bold1 / bold2 / codeSpan / link / [^\n])+
+text		= (italic1 / italic2 / bold1 / bold2 / code / link / [^\n])+
 
 // suppress multiline bold and italics, 'cos it may in the middle of a list, or gawd knows where!
 italic1		= !"* " "*" (&notNl [^*])+ "*"
@@ -28,7 +28,7 @@ image		= "![" (&[^\n] [^\]] )+ "]" "(" (&[^\n] [^)]  )+ ")" anySpace eol
 
 space		= [ \t]
 anySpace	= space*
-eol			= "\n" / eos
+eol			= "\n" / \eos
 blankLine	= anySpace eol
 nl			= "\n"
 notNl		= [^\n]
