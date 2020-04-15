@@ -17,25 +17,23 @@ hr			= ([_-*] anySpace){3,} &endLine
 paragraph	= inline (lineBreak inline)*
 
 inline  	= (
-			#/ bold
-			italic
+			  bold
+			/ italic
 			#/ Image
 			#/ Link
 			/ code
 			/ text
-			/ text:[`*_]		// mop up un-matched special chars
+			/ text:[`*_]+		// mop up un-matched special chars
 			)+
 
-italic		= "*" inline "*"
-#italic2		= !"_ " "_" (&notNl [^_])+ "_"
-#bold1		= "**" [^*\n]+ "**"
-#bold2		= "__" [^_]+ "__"
--code		= "`" code:[^\n`]+ "`"
+bold		= ("**" !space text "**") / ("__" !space text "__")
+italic		= ( "*" !space text "*" ) / ( "_" !space text "_" )
+code		= "`" text "`"
 #link		=  "[" (&[^\n] [^\]] )+ "]" "(" (&[^\n] [^)]  )+ ")" 
 #image		= "![" (&[^\n] [^\]] )+ "]" "(" (&[^\n] [^)]  )+ ")" anySpace eol
 
 lineBreak	= "\n" !blankLine
-text		= [^\n`*]+
+text		= [^\n`*_]+
 
 -space		= [ \t]
 -anySpace	= space*

@@ -33,7 +33,9 @@ class MarkdownWalker {
 			case "paragraph"			: elem.add(elem = Para())
 			case "blockquote"			: elem.add(elem = BlockQuote())
 
-			case "code"					: elem.add(elem = Code().add(DocText(m.matched)))
+			case "code"					: elem.add(elem = Code())
+			case "bold"					: elem.add(elem = Strong())
+			case "italic"				: elem.add(elem = Emphasis())
 			case "lineBreak"			: text(" ")
 			case "text"					: text(m.matched)
 			
@@ -62,6 +64,8 @@ class MarkdownWalker {
 			case "paragraph"			:
 			case "blockquote"			:
 			case "code"					:
+			case "bold"					:
+			case "italic"				:
 				endElem()
 		}
 	}
