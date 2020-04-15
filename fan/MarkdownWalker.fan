@@ -35,6 +35,7 @@ class MarkdownWalker {
 			case "paragraph"	: elem.add(elem = Para())
 			case "blockquote"	: elem.add(elem = BlockQuote())
 			case "ul"			: ul(m)
+			case "ol"			: ol(m)
 
 			case "code"			: elem.add(elem = Code())
 			case "bold"			: elem.add(elem = Strong())
@@ -57,6 +58,7 @@ class MarkdownWalker {
 				endElem()
 
 			case "ul"			:
+			case "ol"			:
 				parseText()
 		}
 	}
@@ -75,7 +77,16 @@ class MarkdownWalker {
 			elem.add(elem = UnorderedList())
 		
 		elem.add(elem = ListItem())
-		// FIXME parse text
+	}
+
+	private Void ol(Match m) {
+		// keep re-using any existing lists
+		if (elem.children.last is OrderedList)
+			elem = elem.children.last
+		else
+			elem.add(elem = OrderedList(OrderedListStyle.number))
+		
+		elem.add(elem = ListItem())
 	}
 	
 	private Void text(Str text) {
@@ -90,6 +101,8 @@ class MarkdownWalker {
 	private Void endElem() {
 		elem = elem.parent
 		if (elem is UnorderedList)
+			elem = elem.parent
+		if (elem is OrderedList)
 			elem = elem.parent
 	}
 	

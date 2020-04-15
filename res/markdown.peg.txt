@@ -3,11 +3,11 @@
 
 markdown	= block+
 
-block		= !\eos blankLine* (
+-block		= !\eos blankLine* (
 				heading / 
 				hr / 
 				ul / 
-			#	ol / 
+				ol / 
 			#	blockquote /
 			#	image / 
 				paragraph /
@@ -26,10 +26,16 @@ ul			= (
 				)*
 			) endLine
 
-echo1		= \noop(echo1)
-echo2		= \noop(echo2)
+ol			= (
+				 space{0,3} olBullet space+ text:[^\n]+ 
+				(
+					(lineBreak       space{0,5} !space !(olBullet space+) text:[^\n]+)
+				  / ("\n" blankLine+ space{2,4} !space                  nltext:[^\n]+)
+				)*
+			) endLine
+
 -ulBullet	= [*+\-]
-//olBullet	= 
+-olBullet	= [0-9]+ "." 
 
 inline  	= (
 			  bold
@@ -56,3 +62,6 @@ trim		= [^\n`*_#]+
 -blankLine	= anySpace newLine
 -endLine	= newLine / \eos
 -newLine	= "\n"
+
+echo1		= \noop(echo1)
+echo2		= \noop(echo2)
