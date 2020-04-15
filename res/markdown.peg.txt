@@ -6,7 +6,7 @@ markdown	= block+
 block		= !\eos blankLine* (
 				heading / 
 				hr / 
-			#	ul / 
+				ul / 
 			#	ol / 
 			#	blockquote /
 			#	image / 
@@ -17,6 +17,19 @@ block		= !\eos blankLine* (
 hr			= ([_-*] anySpace){3,} endLine
 paragraph	= inline (lineBreak inline)* endLine blankLine
 heading		= level:"#"{1,6} !"#" anySpace trim "#"* endLine
+
+ul			= (
+				 space{0,3} ulBullet space+ text:[^\n]+ 
+				(
+					(lineBreak            space{0,5} !space !(ulBullet space+) text:[^\n]+)
+				  #/ (echo1 "\n" echo2 blankLine+ space{2,4} !space                    text:[^\n]+)
+				)*
+			) endLine
+
+echo1		= \noop(echo1)
+echo2		= \noop(echo2)
+-ulBullet	= [*+\-]
+//olBullet	= 
 
 inline  	= (
 			  bold
@@ -41,5 +54,5 @@ trim		= [^\n`*_#]+
 -anySpace	= space*
 -space		= [ \t]
 -blankLine	= anySpace endLine
--endLine	= \eos / newLine
+-endLine	= newLine / \eos
 -newLine	= "\n"
