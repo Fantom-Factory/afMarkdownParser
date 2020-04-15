@@ -1,34 +1,45 @@
 
 // PEG Rules for parsing Markdown text
 
-markdown	= statement*
+markdown	= block+
 
-statement	= heading / hr / ul / ol / pre / preGithub / blockquote / image / paragraph / blankLine / eol
-heading		= "#"{1,6} !"#" anySpace line
-paragraph	= line+
-blockquote	= ">" anySpace line
+block		= !\eos blankLine* (
+			#	blockquote / 
+				hr / 
+			#	atxHeading / 
+			#	ol / 
+			#	ul / 
+				paragraph /
+				\err(FAIL)
+			) endBlock
 
-pre			= "    " notNl+ eol (("    " notNl+ eol) / (" "{0,4} nl))*
-preGithub	= "```" notNl* nl (!"\n```" .)+ "\n```" anySpace eol
-ul			= (space{0,3} [*+\-]     space+ line (space{0,5} !(([*+\-] / "#"{1,6}) space+) line)* )+
-ol			= (space{0,3} [0-9]+ "." space+ line (space{0,5} !( [0-9]+ "."         space+) line)* )+
-hr			= ([_-*] anySpace){3,} nl
+hr			= ([_-*] anySpace){3,} &endLine
+paragraph	= inline (lineBreak inline)*
 
-line		= !(blankLine / "```" / hr / blockquote) text eol
-text		= (italic1 / italic2 / bold1 / bold2 / code / link / [^\n])+
+inline  	= (
+			#/ bold
+			italic
+			#/ Image
+			#/ Link
+			/ code
+			/ text
+			/ text:[`*_]		// mop up un-matched special chars
+			)+
 
-// suppress multiline bold and italics, 'cos it may in the middle of a list, or gawd knows where!
-italic1		= !"* " "*" (&notNl [^*])+ "*"
-italic2		= !"_ " "_" (&notNl [^_])+ "_"
-bold1		= "**" [^*\n]+ "**"
-bold2		= "__" [^_]+ "__"
-code		= "`" (![^\n] [^`])+ "`"
-link		=  "[" (&[^\n] [^\]] )+ "]" "(" (&[^\n] [^)]  )+ ")" 
-image		= "![" (&[^\n] [^\]] )+ "]" "(" (&[^\n] [^)]  )+ ")" anySpace eol
+italic		= "*" inline "*"
+#italic2		= !"_ " "_" (&notNl [^_])+ "_"
+#bold1		= "**" [^*\n]+ "**"
+#bold2		= "__" [^_]+ "__"
+-code		= "`" code:[^\n`]+ "`"
+#link		=  "[" (&[^\n] [^\]] )+ "]" "(" (&[^\n] [^)]  )+ ")" 
+#image		= "![" (&[^\n] [^\]] )+ "]" "(" (&[^\n] [^)]  )+ ")" anySpace eol
 
-space		= [ \t]
-anySpace	= space*
-eol			= "\n" / \eos
-blankLine	= anySpace eol
-nl			= "\n"
-notNl		= [^\n]
+lineBreak	= "\n" !blankLine
+text		= [^\n`*]+
+
+-space		= [ \t]
+-anySpace	= space*
+-newLine	= "\n"
+-blankLine	= anySpace newLine
+endLine		= \eos / newLine
+endBlock	= endLine endLine
