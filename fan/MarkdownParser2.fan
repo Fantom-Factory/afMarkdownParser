@@ -11,7 +11,7 @@ class MarkdownParser2 {
 		match := grammar["markdown"].match(markdown) ?: throw ParseErr("Could not parse Markdown")
 		
 		match.dump
-		return MarkdownWalker().walk(match).root
+		return MarkdownWalker(this).walk(match).root
 	}
 	
 	** Returns the PEG grammar used to parse HTML.

@@ -15,14 +15,14 @@ block		= !\eos blankLine* (
 			)
 
 hr			= ([_-*] anySpace){3,} endLine
-paragraph	= inline (lineBreak inline)* endLine blankLine
+paragraph	= inline (lineBreak inline)* endLine (blankLine / \eos)
 heading		= level:"#"{1,6} !"#" anySpace trim "#"* endLine
 
 ul			= (
 				 space{0,3} ulBullet space+ text:[^\n]+ 
 				(
-					(lineBreak            space{0,5} !space !(ulBullet space+) text:[^\n]+)
-				  #/ (echo1 "\n" echo2 blankLine+ space{2,4} !space                    text:[^\n]+)
+					(lineBreak       space{0,5} !space !(ulBullet space+) text:[^\n]+)
+				  / ("\n" blankLine+ space{2,4} !space                  nltext:[^\n]+)
 				)*
 			) endLine
 
@@ -53,6 +53,6 @@ trim		= [^\n`*_#]+
 
 -anySpace	= space*
 -space		= [ \t]
--blankLine	= anySpace endLine
+-blankLine	= anySpace newLine
 -endLine	= newLine / \eos
 -newLine	= "\n"

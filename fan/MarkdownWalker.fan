@@ -5,9 +5,11 @@ class MarkdownWalker {
 	private static const Log	log			:= MarkdownParser#.pod.log
 	private Doc					doc
 	private DocElem				elem
+	private MarkdownParser2		parser
 	
-	new make() {
-		doc = elem = Doc()
+	new make(MarkdownParser2 parser) {
+		this.parser	= parser
+		this.doc	= this.elem = Doc()
 	}
 	
 	Doc root() {
@@ -40,6 +42,7 @@ class MarkdownWalker {
 			case "lineBreak"	: text(" ")
 			case "text"			: text(m.matched)
 			case "trim"			: text(m.matched.trim)
+			case "nltext"		: text("\n\n" + m.matched)
 		}
 	}
 	
@@ -48,11 +51,13 @@ class MarkdownWalker {
 			case "heading"		:
 			case "paragraph"	:
 			case "blockquote"	:
-			case "ul"			:
 			case "code"			:
 			case "bold"			:
 			case "italic"		:
 				endElem()
+
+			case "ul"			:
+				parseText()
 		}
 	}
 	
@@ -86,5 +91,19 @@ class MarkdownWalker {
 		elem = elem.parent
 		if (elem is UnorderedList)
 			elem = elem.parent
+	}
+	
+	private Void parseText() {
+		text := elem.children.first as DocText
+		if (text.str.contains("\n\n")) {
+			elem.remove(text)
+			elem := parser.parseDoc(text.str)
+			elem.children.each {
+				it.parent.remove(it)
+				this.elem.add(it)
+			}
+		}
+		
+		endElem
 	}
 }

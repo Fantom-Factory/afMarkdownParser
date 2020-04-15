@@ -66,15 +66,17 @@ internal class TestUnorderedLists : MarkdownTest {
 
 		html :=
 "<ul>
- <li>Red</li>
  <li>
+ <p>Red</p>
  <p>Green</p>
- </li>
- <li>
  <p>Blue</p>
  </li>
- </ul>
- "
+ <li>
+ <p>Red2</p>
+ <p>Green2</p>
+ <p>Blue2</p>
+ </li>
+ </ul>"
 		verifyEq(html.trim, parseToHtml(markdown))
 	}
 }
