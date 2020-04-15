@@ -36,6 +36,8 @@ class MarkdownWalker {
 			case "blockquote"	: elem.add(elem = BlockQuote())
 			case "ul"			: ul(m)
 			case "ol"			: ol(m)
+			case "pre"			: pre(m)
+			case "preGit"		: preGit(m)
 
 			case "bold"			: elem.add(elem = Strong())
 			case "italic"		: elem.add(elem = Emphasis())
@@ -53,6 +55,7 @@ class MarkdownWalker {
 		switch (m.name) {
 			case "heading"		:
 			case "paragraph"	:
+			case "pre"			:
 			case "blockquote"	:
 			case "code"			:
 			case "bold"			:
@@ -88,6 +91,20 @@ class MarkdownWalker {
 			elem.add(elem = OrderedList(OrderedListStyle.number))
 		
 		elem.add(elem = ListItem())
+	}
+	
+	private Void pre(Match m) {
+		elem.add(elem = Pre())
+		str := m.matched.splitLines.map { it.size >= 4 ? it[4..-1] : it }.join("\n").trimEnd + "\n"
+		text(str)
+	}
+	
+	private Void preGit(Match m) {
+		elem.add(elem = Pre())
+		str := m.matched
+		if (str.startsWith("\n"))	str = str[1..-1]
+		if (str.endsWith("\n"))		str = str[0..<-1]
+		text(str)
 	}
 	
 	private Void link(Match m) {
@@ -129,7 +146,6 @@ class MarkdownWalker {
 				this.elem.add(it)
 			}
 		}
-		
 		endElem
 	}
 }

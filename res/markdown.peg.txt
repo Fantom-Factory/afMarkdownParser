@@ -8,6 +8,8 @@ markdown	= block+
 				hr / 
 				ul / 
 				ol / 
+				pre /
+				preGithub /
 			#	blockquote /
 				(image anySpace endLine) / 
 				paragraph /
@@ -17,6 +19,11 @@ markdown	= block+
 hr			= ([_-*] anySpace){3,} endLine
 paragraph	= inline (lineBreak inline)* endLine (blankLine / \eos)
 heading		= level:"#"{1,6} !"#" anySpace trim "#"* endLine
+
+pre			= preText ((lineBreak preText) / ("\n" anySpace &"\n") )* endLine
+-preText	= "    " [^\n]+
+-preGithub	= "```" preGit:([^\n]* newLine (!"\n```" .)+) "\n```" anySpace endLine
+
 
 ul			= (
 				 space{0,3} ulBullet space+ text:[^\n]+ 
@@ -37,7 +44,7 @@ ol			= (
 -ulBullet	= [*+\-]
 -olBullet	= [0-9]+ "." 
 
-inline  	= (
+-inline  	= (
 			  bold
 			/ italic
 			/ image
@@ -54,7 +61,7 @@ link		=  "[" txt:[^\]\n]+ "]" "(" uri:(!title [^)\n])+ title? ")"
 image		= "![" alt:[^\]\n]+ "]" "(" uri:(!title [^)\n])+ title? ")"
 -title		= space+ '"' title:[^"\n]+ '"'
 
-lineBreak	= "\n" !blankLine
+-lineBreak	= "\n" !blankLine
 text		= [^\n`*_#![]+
 trim		= [^\n`*_#![]+
 
