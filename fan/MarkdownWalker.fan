@@ -27,7 +27,7 @@ class MarkdownWalker {
 	
 	private Void stepIn(Match m) {
 		switch (m.name) {
-			case "heading"				: heading(m)
+			case "heading"				: level := m["level"].matched.size; elem.add(elem = Heading(level.min(4)))
 
 			case "hr"					: elem.add(Hr())
 			case "paragraph"			: elem.add(elem = Para())
@@ -38,6 +38,7 @@ class MarkdownWalker {
 			case "italic"				: elem.add(elem = Emphasis())
 			case "lineBreak"			: text(" ")
 			case "text"					: text(m.matched)
+			case "trim"					: text(m.matched.trim)
 			
 //			case "doctypeElem"			: doctype (m.matched)
 //			case "publicId"				: publicId(m.matched)
@@ -68,10 +69,6 @@ class MarkdownWalker {
 			case "italic"				:
 				endElem()
 		}
-	}
-	
-	private Void heading(Match m) {
-		elem.add(elem = Heading(2))
 	}
 	
 	private Void text(Str text) {

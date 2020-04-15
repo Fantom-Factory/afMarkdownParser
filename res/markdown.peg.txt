@@ -4,17 +4,19 @@
 markdown	= block+
 
 block		= !\eos blankLine* (
-			#	blockquote / 
+				heading / 
 				hr / 
-			#	atxHeading / 
-			#	ol / 
 			#	ul / 
+			#	ol / 
+			#	blockquote /
+			#	image / 
 				paragraph /
 				\err(FAIL)
-			) endBlock
+			)
 
-hr			= ([_-*] anySpace){3,} &endLine
-paragraph	= inline (lineBreak inline)*
+hr			= ([_-*] anySpace){3,} endLine
+paragraph	= inline (lineBreak inline)* endLine blankLine
+heading		= level:"#"{1,6} !"#" anySpace trim "#"* endLine
 
 inline  	= (
 			  bold
@@ -23,7 +25,7 @@ inline  	= (
 			#/ Link
 			/ code
 			/ text
-			/ text:[`*_]+		// mop up un-matched special chars
+			/ text:[`*_#]+		// mop up un-matched special chars
 			)+
 
 bold		= ("**" !space text "**") / ("__" !space text "__")
@@ -33,11 +35,11 @@ code		= "`" text "`"
 #image		= "![" (&[^\n] [^\]] )+ "]" "(" (&[^\n] [^)]  )+ ")" anySpace eol
 
 lineBreak	= "\n" !blankLine
-text		= [^\n`*_]+
+text		= [^\n`*_#]+
+trim		= [^\n`*_#]+
 
--space		= [ \t]
 -anySpace	= space*
+-space		= [ \t]
+-blankLine	= anySpace endLine
+-endLine	= \eos / newLine
 -newLine	= "\n"
--blankLine	= anySpace newLine
-endLine		= \eos / newLine
-endBlock	= endLine endLine
