@@ -9,7 +9,7 @@ markdown	= block+
 				ul / 
 				ol / 
 			#	blockquote /
-			#	image / 
+				(image anySpace endLine) / 
 				paragraph /
 				\err(FAIL)
 			)
@@ -40,22 +40,23 @@ ol			= (
 inline  	= (
 			  bold
 			/ italic
-			#/ Image
-			#/ Link
+			/ image
+			/ link
 			/ code
 			/ text
-			/ text:[`*_#]+		// mop up un-matched special chars
+			/ text:[`*_#![]+		// mop up un-matched special chars
 			)+
 
 bold		= ("**" !space text "**") / ("__" !space text "__")
 italic		= ( "*" !space text "*" ) / ( "_" !space text "_" )
 code		= "`" text "`"
-#link		=  "[" (&[^\n] [^\]] )+ "]" "(" (&[^\n] [^)]  )+ ")" 
-#image		= "![" (&[^\n] [^\]] )+ "]" "(" (&[^\n] [^)]  )+ ")" anySpace eol
+link		=  "[" txt:[^\]\n]+ "]" "(" uri:(!title [^)\n])+ title? ")"
+image		= "![" alt:[^\]\n]+ "]" "(" uri:(!title [^)\n])+ title? ")"
+-title		= space+ '"' title:[^"\n]+ '"'
 
 lineBreak	= "\n" !blankLine
-text		= [^\n`*_#]+
-trim		= [^\n`*_#]+
+text		= [^\n`*_#![]+
+trim		= [^\n`*_#![]+
 
 -anySpace	= space*
 -space		= [ \t]

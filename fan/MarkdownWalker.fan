@@ -37,9 +37,11 @@ class MarkdownWalker {
 			case "ul"			: ul(m)
 			case "ol"			: ol(m)
 
-			case "code"			: elem.add(elem = Code())
 			case "bold"			: elem.add(elem = Strong())
 			case "italic"		: elem.add(elem = Emphasis())
+			case "link"			: link(m)
+			case "image"		: image(m)
+			case "code"			: elem.add(elem = Code())
 			case "lineBreak"	: text(" ")
 			case "text"			: text(m.matched)
 			case "trim"			: text(m.matched.trim)
@@ -62,7 +64,6 @@ class MarkdownWalker {
 				parseText()
 		}
 	}
-	
 	
 	private Void heading(Match m) {
 		level := m["level"].matched.size.min(4)
@@ -89,6 +90,18 @@ class MarkdownWalker {
 		elem.add(elem = ListItem())
 	}
 	
+	private Void link(Match m) {
+		txt := m["txt"].matched
+		uri := m["uri"].matched
+		elem.add(Link(uri).add(DocText(txt)))
+	}
+	
+	private Void image(Match m) {
+		alt := m["alt"].matched
+		uri := m["uri"].matched
+		elem.add(Image(uri, alt))
+	}
+
 	private Void text(Str text) {
 		last := elem.children.last
 		if (last is DocText) {
