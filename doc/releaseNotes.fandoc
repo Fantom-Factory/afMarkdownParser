@@ -1,3 +1,16 @@
+v0.1
+****
+Parsing with [Pegger 1.1]`pod:afPegger`.
+
+v0.1.0
+======
+New: Re-wrote entire parser to use the new awesome [Pegger 1.1]`pod:afPegger`.
+
+
+
+v0.0
+****
+
 v0.0.12
 =======
  - New: Main method converts fandoc files to markdown and vice-versa. Thanks go to 'LightDye' for the contribution.

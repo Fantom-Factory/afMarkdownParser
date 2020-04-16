@@ -1,8 +1,8 @@
-# Markdown Parser v0.0.12
+# Markdown Parser v0.2.0
 ---
 
 [![Written in: Fantom](http://img.shields.io/badge/written%20in-Fantom-lightgray.svg)](https://fantom-lang.org/)
-[![pod: v0.0.12](http://img.shields.io/badge/pod-v0.0.12-yellow.svg)](http://eggbox.fantomfactory.org/pods/afMarkdownParser)
+[![pod: v0.2.0](http://img.shields.io/badge/pod-v0.2.0-yellow.svg)](http://eggbox.fantomfactory.org/pods/afMarkdownParser)
 [![Licence: ISC](http://img.shields.io/badge/licence-ISC-blue.svg)](https://choosealicense.com/licenses/isc/)
 
 ## Overview
@@ -38,7 +38,7 @@ Or install `Markdown Parser` with [fanr](https://fantom.org/doc/docFanr/Tool.htm
 
 To use in a [Fantom](https://fantom-lang.org/) project, add a dependency to `build.fan`:
 
-    depends = ["sys 1.0", ..., "afMarkdownParser 0.0"]
+    depends = ["sys 1.0", ..., "afMarkdownParser 0.2"]
 
 ## <a name="documentation"></a>Documentation
 
