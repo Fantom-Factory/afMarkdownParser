@@ -3,27 +3,6 @@ using fandoc::FandocParser
 
 internal class TestAll : MarkdownTest {
 	
-	Void testFandoc() {
-		str :=
-		"- list item with no leading space
-
-		 1. Numbered title with no leading space
-		 =======================================
-		 "
-
-		parser	:= FandocParser()
-		fandoc	:= parser.parseStr(str)
-
-		// this fails, see "Fandoc parsing bug" - https://fantom.org/forum/topic/2712
-		verifyEq(0, parser.errs.size)
-	}
-	
-	Void testFandoc2() {
-		str		:= "Lines separated with a single newline\nend up separated with a space"
-		fandoc	:= FandocParser().parseStr(str)
-		verifyEq(fandoc.children.first->children->first.toStr, "Lines separated with a single newline end up separated with a space")
-	}
-	
 	Void testParser() {
 //		Log.get("afPegger").level = LogLevel.debug
 		

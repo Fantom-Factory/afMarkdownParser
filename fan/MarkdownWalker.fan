@@ -55,16 +55,17 @@ class MarkdownWalker {
 		switch (m.name) {
 			case "heading"		:
 			case "paragraph"	:
-			case "blockquote"	:
 			case "pre"			:
 			case "code"			:
 			case "bold"			:
 			case "italic"		:
 				endElem()
-
+			case "blockquote"	:
+				endBqElem()
 			case "ul"			:
 			case "ol"			:
 				parseText()
+				endElem()
 		}
 	}
 	
@@ -122,20 +123,25 @@ class MarkdownWalker {
 
 	private Void text(Str text) {
 		// fandoc merges DocText strings for us
-//		last := elem.children.last
-//		if (last is DocText) {
-//			elem.remove(last)
-//			text = ((DocText) last).str + text
-//		}
 		elem.add(DocText(text))
 	}
 	
 	private Void blockquote() {
-		// fandoc also merges BlockQuotes, so we need to work around it
-		if (elem.children.last is BlockQuote)
-			elem = elem.children.last
-		else
+		// fandoc also merges BlockQuotes, so we need to work around it ... grr!
+		if (elem.children.last is BlockQuote) {
+			bq := elem.children.last as DocElem
+			dt := bq.children.first as DocText
+			bq.remove(dt)
+			bq.add(Para() { dt, })
+			bq.add(elem = Para())
+		} else
 			elem.add(elem = BlockQuote())
+	}
+	
+	private Void endBqElem() {
+		if (elem is Para)
+			elem = elem.parent
+		elem = elem.parent
 	}
 	
 	private Void endElem() {
@@ -145,7 +151,7 @@ class MarkdownWalker {
 		if (elem is OrderedList)
 			elem = elem.parent
 	}
-	
+
 	private Void parseText() {
 		text := elem.children.first as DocText
 		if (text.str.contains("\n\n")) {
@@ -156,6 +162,5 @@ class MarkdownWalker {
 				this.elem.add(it)
 			}
 		}
-		endElem
 	}
 }

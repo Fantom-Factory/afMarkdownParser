@@ -17,7 +17,7 @@ markdown	= block+
 			)
 
 hr			= ([_-*] anySpace){3,} endLine
-paragraph	= inline (lineBreak inline)* endLine (blankLine / \eos)
+paragraph	= inline (lineBreak notSpecial inline)* endLine (blankLine / \eos)?
 heading		= level:"#"{1,6} !"#" anySpace headingId? trim "#"* endLine
 -headingId	= "<a" space+ ("name" / "id") anySpace "=" anySpace ("'" / '"')? id:[^"'>]+ ("'" / '"')? anySpace ">" anySpace "</a>" anySpace
 pre			= preText ((lineBreak preText) / ("\n" anySpace &"\n") )* endLine
@@ -28,16 +28,16 @@ blockquote	= ">" anySpace inline (lineBreak (">" anySpace)? inline)* endLine (bl
 ul			= (
 				 space{0,3} ulBullet space+ text:[^\n]+ 
 				(
-					(lineBreak       space{0,5} !space !(ulBullet space+) text:[^\n]+)
-				  / ("\n" blankLine+ space{2,4} !space                  nltext:[^\n]+)
+					(lineBreak notSpecial space{0,5} !space !ulBullet !olBullet text:[^\n]+)
+				  / ("\n" blankLine+ space{2,4} !space nltext:[^\n]+)
 				)*
 			) endLine
 
 ol			= (
 				 space{0,3} olBullet space+ text:[^\n]+ 
 				(
-					(lineBreak       space{0,5} !space !(olBullet space+) text:[^\n]+)
-				  / ("\n" blankLine+ space{2,4} !space                  nltext:[^\n]+)
+					(lineBreak notSpecial space{0,5} !space !ulBullet !olBullet text:[^\n]+)
+				  / ("\n" blankLine+ space{2,4} !space nltext:[^\n]+)
 				)*
 			) endLine
 
@@ -70,6 +70,4 @@ trim		= [^\n`*_#![]+
 -blankLine	= anySpace newLine
 -endLine	= newLine / \eos
 -newLine	= "\n"
-
-echo1		= \noop(echo1)
-echo2		= \noop(echo2)
+-notSpecial	= ![#!>*=+\-] !"```"		// these chars all start new block elements
