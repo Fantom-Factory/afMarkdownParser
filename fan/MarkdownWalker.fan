@@ -1,13 +1,13 @@
 using fandoc
 using afPegger::Match
 
-class MarkdownWalker {
+@Js internal class MarkdownWalker {
 	private static const Log	log			:= MarkdownParser#.pod.log
 	private Doc					doc
 	private DocElem				elem
-	private MarkdownParser2		parser
+	private MarkdownParser		parser
 	
-	new make(MarkdownParser2 parser) {
+	new make(MarkdownParser parser) {
 		this.parser	= parser
 		this.doc	= this.elem = Doc()
 	}
@@ -156,7 +156,7 @@ class MarkdownWalker {
 		text := elem.children.first as DocText
 		if (text.str.contains("\n\n")) {
 			elem.remove(text)
-			elem := parser.parseDoc(text.str)
+			elem := parser.parse(text.str)
 			elem.children.each {
 				it.parent.remove(it)
 				this.elem.add(it)

@@ -1,6 +1,6 @@
 
 @NoDoc	// advanced use only
-const class MarkdownModule {
+@Js const class MarkdownModule {
 	
 	Str:Obj nonInvasiveIocModule() {
 		[

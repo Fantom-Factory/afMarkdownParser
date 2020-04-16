@@ -9,7 +9,7 @@ internal class TestNHaystack : MarkdownTest {
 		
 		//mdown	:= `test/communityResources.md`.toFile.readAllStr
 		mdown	:= `test/nhaystack.md`.toFile.readAllStr
-		doc		:= MarkdownParser2().parseDoc(mdown)
+		doc		:= MarkdownParser().parse(mdown)
 
 		buf		:= StrBuf()
 		doc.writeChildren(FandocDocWriter(buf.out))
