@@ -1,28 +1,8 @@
-using fandoc::FandocDocWriter
-using fandoc::FandocParser
 
 internal class TestAll : MarkdownTest {
 	
-	Void testParser() {
-//		Log.get("afPegger").level = LogLevel.debug
-		
-		//mdown	:= `test/communityResources.md`.toFile.readAllStr
-		mdown	:= `test/nhaystack.md`.toFile.readAllStr
-//		doc		:= MarkdownParser().parse(mdown)
-
-		buf		:= StrBuf()
-//		doc.writeChildren(FandocDocWriter(buf.out))
-		
-		`test/nhaystack.fandoc`.toFile.out.writeChars(buf.toStr).close
-		
-		buf.clear
-		fandoc	:= FandocParser().parseStr(buf.toStr)
-		fandoc.writeChildren(FandocDocWriter(buf.out))
-
-		echo(buf.toStr)
-	}
-	
 	** Mainly for this to look good: https://stackhub.org/package/itwToolkitExt
+	** It's not GOOD markdown but I suspect the dodgy Fandoc writer produces this
 	Void testCollapses() {
 		markdown := ""
 		html	 := ""
