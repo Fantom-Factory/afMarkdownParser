@@ -33,7 +33,7 @@ class MarkdownWalker {
 
 			case "hr"			: elem.add(Hr())
 			case "paragraph"	: elem.add(elem = Para())
-			case "blockquote"	: elem.add(elem = BlockQuote())
+			case "blockquote"	: blockquote()
 			case "ul"			: ul(m)
 			case "ol"			: ol(m)
 			case "pre"			: pre(m)
@@ -44,7 +44,7 @@ class MarkdownWalker {
 			case "link"			: link(m)
 			case "image"		: image(m)
 			case "code"			: elem.add(elem = Code())
-			case "lineBreak"	: text(" ")
+			case "lineBreak"	: if (elem isnot Pre) text(" ")
 			case "text"			: text(m.matched)
 			case "trim"			: text(m.matched.trim)
 			case "nltext"		: text("\n\n" + m.matched)
@@ -55,8 +55,8 @@ class MarkdownWalker {
 		switch (m.name) {
 			case "heading"		:
 			case "paragraph"	:
-			case "pre"			:
 			case "blockquote"	:
+			case "pre"			:
 			case "code"			:
 			case "bold"			:
 			case "italic"		:
@@ -70,7 +70,8 @@ class MarkdownWalker {
 	
 	private Void heading(Match m) {
 		level := m["level"].matched.size.min(4)
-		elem.add(elem = Heading(level))
+		id    := m["id"]?.matched?.trim
+		elem.add(elem = Heading(level) { it.anchorId = id })
 	}
 	
 	private Void ul(Match m) {
@@ -120,12 +121,21 @@ class MarkdownWalker {
 	}
 
 	private Void text(Str text) {
-		last := elem.children.last
-		if (last is DocText) {
-			elem.remove(last)
-			text = ((DocText) last).str + text
-		}
+		// fandoc merges DocText strings for us
+//		last := elem.children.last
+//		if (last is DocText) {
+//			elem.remove(last)
+//			text = ((DocText) last).str + text
+//		}
 		elem.add(DocText(text))
+	}
+	
+	private Void blockquote() {
+		// fandoc also merges BlockQuotes, so we need to work around it
+		if (elem.children.last is BlockQuote)
+			elem = elem.children.last
+		else
+			elem.add(elem = BlockQuote())
 	}
 	
 	private Void endElem() {
